@@ -1,0 +1,229 @@
+a {
+	color: #333;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+/* * { margin: 0; padding: 0; } */
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden
+}
+
+.addressCs {
+	width: 45px;
+	float: left;
+	height: 45px;
+	margin-right: 10px;
+}
+
+.tgRemoveCs {
+    background-color: #87C86A;
+    border: solid 1px #ccc;
+    margin-left: 1%;
+    height: 24px;
+    cursor: pointer;
+}
+
+.clearfix {
+	*height: 1%;
+}
+
+
+.box {
+	padding: 10px 0 20px 0px;
+	position: relative;
+	width: 575px;
+	font-size: 16px;
+	line-height: 120%;
+	color: #333;
+}
+
+
+
+.head {
+	float: left;
+	width: 60px;
+	height: 60px;
+	margin-right: 5px;
+}
+.headImg {
+	float: left;
+	width: 60px;
+	height: 60px;
+	margin-right: 10px;
+}
+
+.content {
+	float: left;
+	width: 475px;
+}
+
+.main {
+	margin-bottom: 10px;
+}
+
+.txt {
+	margin-bottom: 10px;
+}
+
+.user {
+	color: #00542D;;
+}
+
+.pic {
+	margin-right: 5px;
+	width: 200px;
+	border: 1px solid #eee;
+}
+
+.info {
+	height: 20px;
+	line-height: 19px;
+	font-size: 14px;
+	margin: 0 0 10px 0;
+}
+
+.info .time {
+	color: #B5B5B5;
+	float: left;
+	height: 20px;
+	padding-left: 16px;
+	/* background: url("../images/bg1.jpg") no-repeat left top; */
+}
+
+.info .praise {
+	color: #00542D;;
+	float: right;
+	height: 20px;
+	padding-left: 18px;
+	background: url("/page/chat/work/images/bg2.jpg") no-repeat left top;
+}
+
+.info .praise:hover {
+	text-decoration: underline;
+	background: url("images/work_q/bg3.jpg") no-repeat left top;
+}
+
+.praises-total {
+	margin: 0 0 10px 0;
+	height: 20px;
+	background: url("images/work_q/praise.png") no-repeat 5px 5px
+		rgb(247, 247, 247);
+	padding: 5px 0 5px 25px;
+	line-height: 19px;
+}
+
+.comment-box {
+	padding: 10px 0;
+}
+
+.comment-box:hover {
+	background: #CAE6FB;
+}
+
+.comment-box .myhead {
+	float: left;
+	width: 40px;
+	height: 40px;
+	margin-right: 10px;
+	margin-left: 10px;
+}
+
+.comment-box .comment-content {
+	float: left;
+	width: 100%;
+}
+
+.comment-box .comment-content .comment-time {
+	color: #B5B5B5;
+	margin-top: 3px;
+	line-height: 16px;
+	position: relative;
+}
+
+.comment-box .comment-content .comment-praise {
+	display: none;
+	color: #00542D;
+	padding-left: 17px;
+	height: 20px;
+	background: url("images/work_q/praise.png") no-repeat;
+	position: absolute;
+	bottom: 0px;
+	right: 44px;
+}
+
+.comment-box .comment-content .comment-operate {
+	display: none;
+	color: #00542D;
+	height: 20px;
+	position: absolute;
+	bottom: 0px;
+	right: 10px;
+}
+
+.comment-box .comment-content:hover .comment-praise {
+	display: inline-block;
+}
+
+.comment-box .comment-content:hover .comment-operate {
+	display: inline-block;
+}
+
+.text-box .comment {
+	border: 1px solid #e6e6e6;
+	display: block;
+	height: 30px;
+	padding: 5px;
+	resize: none;
+	color: #B5B5B5;
+	font-size: 14px;
+	line-height: 120%;
+}
+
+.text-box .btn {
+	font-size: 12px;
+	font-weight: bold;
+	display: none;
+	float: right;
+	width: 65px;
+	height: 25px;
+	border: 1px solid #3DA8F5;;
+	color: #fff;
+	background: #3DA8F5;
+	line-height: 0.8em;
+}
+
+.text-box .btn-off {
+	border: 1px solid #ccc;
+	color: #ccc;
+	background: #F7F7F7;
+}
+
+.text-box .word {
+	display: none;
+	float: right;
+	margin: 7px 10px 0 0;
+	color: #666;
+}
+
+.text-box-on .comment {
+	height: 50px;
+	color: #333;
+}
+
+.text-box-on .btn {
+	display: inline;
+	margin-right: 0%;
+	margin-top: 3px;
+}
+
+.text-box-on .word {
+	display: inline;
+	margin-top: 8px;
+}

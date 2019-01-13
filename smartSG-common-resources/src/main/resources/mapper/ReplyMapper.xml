@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ReplyDao">
+	<resultMap id="BaseResultMap" type="com.sg.model.Reply">
+		<id column="EID" property="eid" />
+		<result column="COMPANY_ID" property="companyId" />
+		<result column="DEPT_ID" property="deptId" />
+		<result column="SEND_ID" property="sendId" />
+		<result column="BID" property="bid" />
+		<result column="CONTENT" property="content" />
+		<result column="SEND_IS_DEL" property="sendIsDel" />
+		<result column="RECEIVE_IS_DEL" property="receiveIsDel" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="UPDATE_TIME" property="updateTime" />
+		<result column="REPLY_DATE" property="replyDate" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, COMPANY_ID, DEPT_ID, SEND_ID, BID, CONTENT, 
+		SEND_IS_DEL, RECEIVE_IS_DEL, 
+		DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') CREATE_TIME, 
+		DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d %H:%i:%s') UPDATE_TIME, REPLY_DATE
+	</sql>
+
+	<insert id="insert" parameterType="com.sg.model.Reply" useGeneratedKeys="true" keyProperty="eid">
+		insert into T_REPLY (
+			COMPANY_ID, DEPT_ID, SEND_ID, BID, CONTENT, 
+			CREATE_TIME, UPDATE_TIME, REPLY_DATE
+		) values (
+			#{companyId}, #{deptId}, #{sendId}, #{bid}, #{content}, 
+			now(), now(), #{replyDate}
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_REPLY
+		where EID = #{eid}
+	</select>
+
+	<update id="update" parameterType="com.sg.model.Reply">
+		update T_REPLY
+		<set>
+			<if test="companyId != null">
+				COMPANY_ID = #{companyId},
+			</if>
+			<if test="deptId != null">
+				DEPT_ID = #{deptId},
+			</if>
+			<if test="sendId != null">
+				SEND_ID = #{sendId},
+			</if>
+			<if test="bid != null">
+				BID = #{bid},
+			</if>
+			<if test="content != null">
+				CONTENT = #{content},
+			</if>
+			<if test="sendIsDel != null">
+				SEND_IS_DEL = #{sendIsDel},
+			</if>
+			<if test="receiveIsDel != null">
+				RECEIVE_IS_DEL = #{receiveIsDel},
+			</if>
+			<if test="createTime != null">
+				CREATE_TIME = #{createTime},
+			</if>
+				UPDATE_TIME = now(),
+			<if test="replyDate != null">
+				REPLY_DATE = #{replyDate},
+			</if>
+		</set>
+		where EID = #{eid}
+	</update>
+	
+	<select id="findMapByEid" resultType="map">
+		select 
+		case s.KIND
+			when 1 then '商业合作' 
+			when 2 then '投诉结果' 
+			when 3 then '意见反馈' 
+			when 4 then '其他反馈' 
+			when 5 then '系统消息' 
+		end kindName,
+		u.NAME receiveName,
+		r.CONTENT content,
+		DATE_FORMAT(r.REPLY_DATE,'%Y-%m-%d')replyDate
+		from T_REPLY r inner join T_SUGGEST s on s.EID = r.BID left join SYS_USER u on u.EID = s.SEND_ID
+ 		where r.EID = #{eid}
+	</select>
+
+</mapper>

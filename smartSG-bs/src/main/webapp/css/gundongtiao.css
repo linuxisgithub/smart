@@ -1,0 +1,17 @@
+/* 滚动条优化 */
+
+.gundong::-webkit-scrollbar {
+ width: 5px;
+}
+ .gundong::-webkit-scrollbar-track {
+ background-color:#F0F0F0;
+ -webkit-border-radius: 1em;
+ -moz-border-radius: 1em;
+ border-radius:1em;
+}
+ .gundong::-webkit-scrollbar-thumb {
+ background-color:#CDCDCD;
+ -webkit-border-radius: 1em;
+ -moz-border-radius: 1em;
+ border-radius:1em;
+}

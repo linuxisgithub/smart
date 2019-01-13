@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TwRenovationDao">
+	<resultMap id="BaseResultMap" type="com.sg.model.TwRenovation">
+		<id column="EID" property="eid" />
+		<result column="BID" property="bid" />
+		<result column="HEALTH" property="health" />
+		<result column="TYPE" property="type" />
+		<result column="VARIETIES" property="varieties" />
+		<result column="OTHER_VARIETIES" property="otherVarieties" />
+		<result column="MINIMUM" property="minimum" />
+		<result column="LINEUP" property="lineup" />
+		<result column="PROCEDURE" property="procedure" />
+		<result column="STYLE" property="style" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="UPDATE_TIME" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, BID, HEALTH, `TYPE`, VARIETIES, OTHER_VARIETIES,
+		MINIMUM, LINEUP, `PROCEDURE`, STYLE, DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') CREATE_TIME, DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d %H:%i:%s') UPDATE_TIME
+
+	</sql>
+
+	<insert id="insert" parameterType="com.sg.model.TwRenovation" useGeneratedKeys="true" keyProperty="eid">
+		insert into T_TW_RENOVATION (
+			BID, HEALTH, `TYPE`, VARIETIES, OTHER_VARIETIES,
+			MINIMUM, LINEUP, `PROCEDURE`, STYLE, CREATE_TIME
+		) values (
+			#{bid}, #{health}, #{type}, #{varieties}, #{otherVarieties}, 
+			#{minimum}, #{lineup}, #{procedure}, #{style}, now()
+
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_TW_RENOVATION
+		where EID = #{eid}
+	</select>
+
+	<select id="findByBid" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_TW_RENOVATION
+		where BID = #{bid}
+	</select>
+
+	<update id="update" parameterType="com.sg.model.TwRenovation">
+		update T_TW_RENOVATION
+		<set>
+			<if test="bid != null">
+				BID = #{bid},
+			</if>
+			<if test="health != null">
+				HEALTH = #{health},
+			</if>
+			<if test="type != null">
+				TYPE = #{type},
+			</if>
+			<if test="varieties != null">
+				VARIETIES = #{varieties},
+			</if>
+			<if test="otherVarieties != null">
+				OTHER_VARIETIES = #{otherVarieties},
+			</if>
+			<if test="minimum != null">
+				MINIMUM = #{minimum},
+			</if>
+			<if test="lineup != null">
+				LINEUP = #{lineup},
+			</if>
+			<if test="procedure != null">
+				`PROCEDURE` = #{procedure},
+			</if>
+			<if test="style != null">
+				STYLE = #{style},
+			</if>
+				UPDATE_TIME = now()
+		</set>
+		where EID = #{eid}
+	</update>
+
+</mapper>

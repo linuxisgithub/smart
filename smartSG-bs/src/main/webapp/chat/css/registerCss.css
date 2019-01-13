@@ -1,0 +1,127 @@
+/* CSS Document */
+.Register {
+	width: 442px;
+	height: 342px;
+	background-color: #027D4F;
+	border-radius: 8px;
+}
+
+.RegisterT {
+	width: 442px;
+	height: 59px;
+	float: left;
+}
+
+.RegisterT1 {
+	width: 44px;
+	height: 29px;
+	float: left;
+	font-family: "微软雅黑";
+	font-size: 18px;
+	font-weight: 600;
+	color: #FFFFFF;
+	margin-left: 199px;
+	margin-top: 23px;
+}
+
+.RegisterT2 {
+	width: 66px;
+	height: 59px;
+	float: right;
+}
+
+.RegisterB {
+	width: 442px;
+	height: 283px;
+	float: left;
+}
+
+.ibox-content {
+	background-color: #027D4F;
+	color: inherit;
+	padding: 5px 20px 6px 20px;
+	border-color: #e7eaec;
+	border-image: none;
+	border-style: solid solid none;
+	border-width: 1px 0px;
+}
+
+.RegisterTitle {
+	color: #eef8f5;
+	font-size: 14px;
+	background-color: #004D23;
+	width: 105px;
+	height: 20px;
+	padding: 13px;
+	float: left;
+	margin-top: 4px;
+	border-right: solid 2px #eef8f5;
+	font-style: italic;
+	text-align: center;
+}
+
+.RegisterFieldset {
+	border: none;
+	background-color: #EEF8F5;
+	padding-top: 10px;
+	border-radius: 0px 0px 3px 3px;
+}
+
+.RegisterFieldset1 {
+	height: 40px;
+	margin-bottom: 15px;
+	margin-top: 10px;
+}
+
+.RegisterFieldset1label {
+	float: left;
+	height: 25px;
+	margin-top: 10px;
+	color: #242424;
+}
+
+.RegisterFieldset1input {
+	border-radius: 3px;
+	padding: 10px;
+	float: left;
+	width: 248px;
+	border: 1px solid #D7D7D7;
+	background-color: #ededed;
+}
+
+.Registerbtn1 {
+	width: 380px;
+	height: 36px;
+	float: right;
+	margin-top: 8px;
+}
+
+.Registerbtn2 {
+	width: 134px;
+	padding: 8px 10px;
+	background-color: #004D23;
+	border-radius: 3px;
+	float: right;
+	font-size: 12px;
+	color: #fff;
+	margin-right: 119px;
+	text-align: center;
+}
+
+.get_code {
+	cursor: pointer;
+	float: right;
+	background-color: #004D23;
+	border-radius: 2px;
+	color: #fff;
+	padding: 10px 11px;
+	font-size: 12px;
+	margin-top: 1px;
+}
+
+.big_btn {
+	margin-right: 18px;
+	height: 30px;
+	margin-top: 10px;
+	float: left;
+}

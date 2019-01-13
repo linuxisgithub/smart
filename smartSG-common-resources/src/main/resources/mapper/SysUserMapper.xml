@@ -1,0 +1,1162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysUserDao">
+	<resultMap id="BaseResultMap" type="com.system.model.SysUser">
+		<id column="EID" property="eid" />
+		<result column="STAFF_NO" property="staffNo" />
+		<result column="COMPANY_ID" property="companyId" />
+		<result column="CREATE_USER_ID" property="createUserId" />
+		<result column="DEPT_ID" property="deptId" />
+		<result column="DEPT_NAME" property="deptName" />
+		<result column="DEPT_CODE" property="deptCode" />
+		<result column="MANAGER_ID" property="managerId" />
+		<result column="LEVEL" property="level" />
+		<result column="EDUCATION" property="education" />
+		<result column="JOB" property="job" />
+		<result column="JOB_STATUS" property="jobStatus" />
+		<result column="NAME" property="name" />
+		<result column="ORIGIN_ADDR" property="originAddr" />
+		<result column="ADDRESS" property="address" />
+		<result column="LINK_ADDRESS" property="linkAddress" />
+		<result column="TELEPHONE" property="telephone" />
+		<result column="QQ" property="qq" />
+		<result column="WECHAT" property="wechat" />
+		<result column="MARRY" property="marry" />
+		<result column="SEX" property="sex" />
+		<result column="AGE" property="age" />
+		<result column="EMAIL" property="email" />
+		<result column="SALARY" property="salary" />
+		<result column="ACCOUNT" property="account" />
+		<result column="PASSWORD" property="password" />
+		<result column="SHOWPASSWORD" property="showPassword" />
+		<result column="IM_ACCOUNT" property="imAccount" />
+		<result column="ICON" property="icon" />
+		<result column="USER_TYPE" property="userType" />
+		<result column="EMPLOY_TIME" property="employTime" />
+		<result column="UPDATE_TIME" property="updateTime" />
+		<result column="LAST_LOGIN_TIME" property="lastLoginTime" />
+		<result column="STATUS" property="status" />
+		<result column="BIRTH_DATE" property="birthDate" />
+		<result column="IM_STATUS" property="imStatus" />
+		<result column="CONTRACT" property="contract" />
+		<result column="WORK_IMG" property="workImg" />
+		<result column="SCHOOL" property="school" />
+		<result column="ID_CARD" property="idCard" />
+		<result column="BUS_MESS" property="busMess" />
+		<result column="CHAT_MESS" property="chatMess" />
+		<result column="IS_BLACK" property="isBlack" />
+		<result column="IS_DEL" property="isDel" />
+	</resultMap>
+	<resultMap id="FileResultMap" type="java.util.Map">
+		<result column="EID" property="eid" />
+		<result column="NAME" property="name" />
+		<result column="ORIGIN_ADDR" property="originAddr" />
+		<result column="CREATE_USER_ID" property="createUserId" />
+		<result column="SEX" property="sex" />
+		<result column="BIRTH_DATE" property="birthDate" />
+		<result column="DEPT_ID" property="deptId" />
+		<result column="DEPT_NAME" property="deptName" />
+		<result column="DEPT_CODE" property="deptCode" />
+		<result column="JOB" property="job" />
+		<result column="EDUCATION" property="education" />
+		<result column="ADDRESS" property="address" />
+		<result column="LINK_ADDRESS" property="linkAddress" />	
+		<result column="TELEPHONE" property="telephone" />
+		<result column="EMAIL" property="email" />
+		<result column="QQ" property="qq" />
+		<result column="LEVEL" property="level" />
+		<result column="WECHAT" property="wechat" />
+		<result column="MARRY" property="marry" />
+		<result column="SALARY" property="salary" />
+		<result column="EMPLOY_TIME" property="employTime" />
+		<result column="ACCOUNT" property="account" />
+		<result column="JOB_STATUS" property="jobStatus" />
+		<result column="PASSWORD" property="password" />
+		<result column="STATUS" property="status" />
+		<result column="IM_ACCOUNT" property="imAccount" />
+		<result column="IM_STATUS" property="imStatus" />
+		<result column="SCHOOL" property="school" />
+		<result column="CONTRACT" property="contract" />
+		<result column="ID_CARD" property="idCard" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		EID, CREATE_USER_ID, STAFF_NO, COMPANY_ID, DEPT_ID, DEPT_NAME, DEPT_CODE, MANAGER_ID, LEVEL,
+		 EDUCATION, JOB, JOB_STATUS, NAME, ORIGIN_ADDR, 
+		ADDRESS, LINK_ADDRESS, TELEPHONE, QQ, WECHAT, MARRY, 
+		SEX, EMAIL, SALARY, ACCOUNT, PASSWORD, SHOWPASSWORD, IM_ACCOUNT, 
+		ICON, USER_TYPE, DATE_FORMAT(EMPLOY_TIME,'%Y-%m-%d') EMPLOY_TIME,
+		DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d %H:%i:%S') UPDATE_TIME, 
+		DATE_FORMAT(LAST_LOGIN_TIME,'%Y-%m-%d %H:%i:%S') LAST_LOGIN_TIME,
+		STATUS,BIRTH_DATE,IM_STATUS,AGE,CONTRACT,WORK_IMG,SCHOOL,ID_CARD,
+		BUS_MESS , CHAT_MESS
+	</sql>
+	<sql id="Base_File_List">
+		EID,NAME,ORIGIN_ADDR,SEX,
+		BIRTH_DATE,
+		DEPT_ID,DEPT_NAME,DEPT_CODE,JOB,EDUCATION,
+		ADDRESS,LINK_ADDRESS,TELEPHONE,EMAIL,QQ,WECHAT,
+		MARRY,SALARY,JOB_STATUS,LEVEL,
+		DATE_FORMAT(EMPLOY_TIME,'%Y-%m-%d') EMPLOY_TIME,
+		ACCOUNT,PASSWORD,STATUS,
+		IM_ACCOUNT,IM_STATUS,SCHOOL,CONTRACT,ID_CARD
+	</sql>
+	
+	<select id="getDriveTokenById" resultType="java.lang.String">
+		select DIRIVE_TOKEN from SYS_USER where EID = #{eid}
+	</select>
+	
+	<update id="updateDriveTokenById">
+		update SYS_USER
+		<set>
+		DIRIVE_TOKEN = #{driveToken}
+		</set>
+		where EID = #{userId}
+	</update>
+	
+	<update id="updateAppleApnsBadge">
+		update SYS_USER
+		<set>
+		BADGE = #{badge}
+		</set>
+		where EID = #{userId}
+	</update>
+	
+	<update id="setTokenNullByDeviceToken">
+		update SYS_USER
+		<set>
+		DIRIVE_TOKEN = null
+		</set>
+		where DIRIVE_TOKEN = #{deviceToken}
+	</update>
+	
+	<update id="updateBadgeBatch">
+	 	<foreach collection="list" item="item" separator=";">  
+           update SYS_USER
+			<set>
+				BADGE = #{item.badge}
+			</set>
+			where DIRIVE_TOKEN = #{item.diriveToken}
+       	</foreach>  
+	</update>
+	
+	<select id="finddeviceTokenByEids" resultType="java.lang.String">
+		select
+		DIRIVE_TOKEN 
+		from SYS_USER
+		where EID IN 
+		<foreach item="item"  collection="list" open="(" separator="," close=")"> 
+    		#{item} 
+		</foreach> 
+	</select>
+	
+	<select id="findImAccountByEids" resultType="java.lang.String">
+		select
+		IM_ACCOUNT 
+		from SYS_USER
+		where EID IN 
+		<foreach item="item"  collection="list" open="(" separator="," close=")"> 
+    		#{item} 
+		</foreach> 
+	</select>
+	
+	<select id="finddeviceTokenAll" resultType="java.lang.String">
+		select
+		DIRIVE_TOKEN 
+		from SYS_USER
+		where COMPANY_ID = #{companyId} AND EID != #{userId} AND DIRIVE_TOKEN is not null
+	</select>
+	
+	<select id="finddeviceTokenForDept" resultType="java.lang.String">
+		select
+		DIRIVE_TOKEN 
+		from SYS_USER
+		where COMPANY_ID = #{companyId} 
+		AND DEPT_ID = #{deptId}
+		AND EID != #{userId} AND DIRIVE_TOKEN is not null
+	</select>
+	
+	<select id="findBadgeByDeviceToken" resultType="java.util.Map">
+		select 
+		DIRIVE_TOKEN diriveToken,
+		BADGE badge
+		from SYS_USER
+		where DIRIVE_TOKEN IN 
+		<foreach item="item"  collection="list" open="(" separator="," close=")"> 
+    		#{item} 
+		</foreach> 
+	</select>
+	
+	<select id="findAllUser" resultType="java.util.Map">
+	select
+	NAME name,
+	PASSWORD password,
+	ICON icon,
+	COMPANY_ID companyId,
+	ACCOUNT account,
+	IM_ACCOUNT imAccount
+	from SYS_USER;
+	</select>
+
+	<select id="getFileById" resultMap="FileResultMap">
+		select
+		<include refid="Base_File_List" />
+		from SYS_USER
+		where EID = #{eid}
+	</select>
+	
+	<select id="findPersosalFile" resultType="Map">
+		select
+		EID eid,DEPT_NAME deptName,
+		NAME name,AGE age,DEPT_ID deptId,
+		SEX sex,JOB job   
+		from SYS_USER
+		where COMPANY_ID = #{criteria.l_companyId}
+		<if test="criteria.s_name != null">
+			and name like concat('%',#{criteria.s_name},'%')
+		</if>
+		
+	</select>
+	
+	<select id="perFileByDeptIdCount" resultType="long">
+	select
+	count(1) 
+	from SYS_USER
+	where DEPT_ID = #{criteria.l_dpId}
+	</select>
+	
+	<select id="findPageAllCount" resultType="long">
+	select
+	count(1) 
+	from SYS_USER
+	where USER_TYPE IN(1,2) AND STATUS = 1;
+	</select>
+	
+	<select id="findCountByLevel" resultType="long">
+	select
+	count(a.EID) 
+	from SYS_USER a
+	INNER JOIN SYS_COMPANY b on b.EID = a.COMPANY_ID AND b.LEVEL = #{level}
+	where a.USER_TYPE IN(1,2) AND a.STATUS = 1 
+	</select>
+	
+	<select id="findPageByLevelCount" resultType="long">
+	select
+	count(a.EID) 
+	from SYS_USER a
+	INNER JOIN SYS_COMPANY b on b.EID = a.COMPANY_ID AND b.LEVEL = #{criteria.level}
+	where a.USER_TYPE IN(1,2) AND a.STATUS = 1 
+	</select>
+	
+	<select id="findPageByLevelList" resultType="com.system.model.SysUser">
+	select
+	a.EID eid,a.NAME name,
+	a.COMPANY_ID companyId
+	from SYS_USER a
+	INNER JOIN SYS_COMPANY b on b.EID = a.COMPANY_ID AND b.LEVEL = #{criteria.level}
+	where a.USER_TYPE IN(1,2) AND a.STATUS = 1
+	</select>
+	
+	<select id="findPageAllList" resultType="java.util.HashMap">
+	<![CDATA[
+	select
+	a.EID eid,
+	a.COMPANY_ID companyId,
+	a.DEPT_ID deptId,
+	a.NAME name,
+	a.DEPT_NAME deptName,
+	b.EID wId,
+	b.UP_TIME upTime,
+	b.OUT_TIME outTime,
+	b.DEPT_ID deptId,
+	b.START_TIME startTime,
+	b.END_TIME endTime,
+	b.MIN_START_TIME minStartTime,
+	b.MIN_END_TIME minEndTime,
+	b.SIGN_LATE signLate,
+	b.LEAVE_EARLY leaveEarly
+	
+	from SYS_USER a left join T_WORK_TIME b on a.EID = b.USER_ID 
+	and DATE_FORMAT(b.CREATE_TIME,'%Y-%m-%d') = #{criteria.yesterday}
+	where USER_TYPE IN(1,2) AND STATUS = 1
+	order by a.COMPANY_ID, a.DEPT_ID
+	]]>
+	</select>
+	
+	<select id="findAllCount" resultType="long">
+	select
+	count(1)
+	from SYS_USER 
+	where USER_TYPE IN(1,2) AND STATUS = 1;
+	</select>
+	
+	<select id="perFileByDeptIdList" resultType="java.util.HashMap">
+	select
+	EID deid,DEPT_NAME ddeptName,
+	NAME dname,AGE dage,
+	SEX dsex,JOB djob   
+	from SYS_USER
+	where DEPT_ID = #{criteria.l_dpId}
+	</select>
+	
+	<select id="findPersosalFileCount" resultType="long">
+		<!-- SELECT count(*) FROM
+		SYS_USER
+		where COMPANY_ID = #{criteria.l_companyId}
+		<if test="criteria.s_name != null">
+		and name like concat('%',#{criteria.s_name},'%')
+		</if> -->
+		SELECT count(*) FROM SYS_USER u 
+		where u.COMPANY_ID = #{criteria.l_companyId} and u.DEPT_CODE !='1000000000'
+		<if test="criteria.s_name != null">
+			and u.NAME like concat('%',#{criteria.s_name},'%')
+		</if>
+	</select>
+	
+	<select id="findPersosalFileList" resultType="java.util.HashMap">
+		SELECT
+		u.EID eid,u.DEPT_ID deptId,
+		u.DEPT_NAME deptName,
+		u.NAME name,u.AGE age,
+		u.SEX sex,u.JOB job 
+		<!-- from
+		SYS_USER
+		where COMPANY_ID = #{criteria.l_companyId}
+		<if test="criteria.s_name != null">
+		and name like concat('%',#{criteria.s_name},'%')
+		</if>
+		ORDER
+		BY
+		EMPLOY_TIME DESC -->
+		from
+		SYS_USER u 
+		where u.COMPANY_ID = #{criteria.l_companyId} and u.DEPT_CODE !='1000000000'
+		<if test="criteria.s_name != null">
+			and u.NAME like concat('%',#{criteria.s_name},'%')
+		</if>
+		ORDER
+		BY u.EMPLOY_TIME DESC
+	</select>
+	
+	<insert id="insert" parameterType="com.system.model.SysUser" useGeneratedKeys="true" keyProperty="eid">
+		insert into SYS_USER (
+			STAFF_NO, CREATE_USER_ID, COMPANY_ID, DEPT_ID, DEPT_NAME, DEPT_CODE, MANAGER_ID, 
+			 EDUCATION, JOB, JOB_STATUS, NAME, ORIGIN_ADDR,
+			ADDRESS, LINK_ADDRESS, TELEPHONE, QQ, WECHAT, MARRY, 
+			SEX, EMAIL, SALARY, ACCOUNT, PASSWORD, SHOWPASSWORD, IM_ACCOUNT, 
+			ICON, USER_TYPE, EMPLOY_TIME, UPDATE_TIME, LAST_LOGIN_TIME,STATUS,BIRTH_DATE,IM_STATUS,AGE,LEVEL,
+			CONTRACT,SCHOOL,ID_CARD
+		) values (
+			#{staffNo}, #{createUserId},#{companyId}, #{deptId}, #{deptName}, #{deptCode},#{managerId}, 
+			#{education}, #{job}, #{jobStatus}, #{name}, #{originAddr},
+			#{address}, #{linkAddress}, #{telephone}, #{qq}, #{wechat}, #{marry}, 
+			#{sex}, #{email}, #{salary}, #{account}, #{password}, #{showPassword}, #{imAccount}, 
+			#{icon}, #{userType}, #{employTime}, now(), now(),#{status},#{birthDate},#{imStatus},#{age},#{level},
+			#{contract}, #{school}, #{idCard}
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_USER
+		where EID = #{seid}
+	</select>
+	
+	<select id="findSuperUserByCompanyId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_USER
+		where COMPANY_ID = #{companyId} and USER_TYPE = 2;
+	</select>
+	
+	<select id="findLogin"  resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_USER
+		where ACCOUNT = #{account} AND PASSWORD =#{password}
+	</select>
+	
+	<select id="findAllByCompanyId"  resultMap="BaseResultMap">
+		select
+		EID,NAME,IM_ACCOUNT
+		from SYS_USER
+		where COMPANY_ID = #{companyId}
+	</select>
+	
+	<select id="findAllByCompanyIdMap"  resultType="java.util.HashMap">
+		select
+		EID eid,
+		NAME name,
+		COMPANY_ID companyId,
+		DEPT_ID deptId,
+		ICON icon,
+		MANAGER_ID managerId ,
+		LEVEL level ,
+		EDUCATION education ,
+		JOB_STATUS jobStatus,
+		ORIGIN_ADDR originAddr,
+		ADDRESS  address,
+		LINK_ADDRESS linkAddress,
+		TELEPHONE telePhone,
+		QQ qq,
+		WECHAT weChat,
+		MARRY  marry,
+		SEX sex,
+		AGE age,
+		DEPT_NAME deptName,
+		JOB job,
+		ACCOUNT account,
+		IM_ACCOUNT imAccount,
+		BIRTH_DATE birthDate,
+		EMAIL email,
+		IFNULL(SALARY,0) salary,
+		STATUS status,
+		IM_STATUS imStatus,
+		USER_TYPE userType,
+		DATE_FORMAT(EMPLOY_TIME,'%Y-%m-%d') employTime,
+		CONTRACT contract
+		
+		from SYS_USER
+		where COMPANY_ID = #{l_companyId}
+		<if test="l_deptId != -1">
+			and DEPT_ID = #{l_deptId}	
+		</if>
+	</select>
+	<update id="update" parameterType="com.system.model.SysUser">
+		update SYS_USER
+		<set>
+			<if test="staffNo != null">
+				STAFF_NO = #{staffNo},
+			</if>
+			<if test="createUserId != null">
+				CREATE_USER_ID = #{createUserId},
+			</if>
+			<if test="companyId != null">
+				COMPANY_ID = #{companyId},
+			</if>
+			<if test="birthDate != null">
+				BIRTH_DATE = #{birthDate},
+			</if>
+			<if test="deptId != null">
+				DEPT_ID = #{deptId},
+			</if>
+			<if test="deptName != null">
+				DEPT_NAME = #{deptName},
+			</if>
+			<if test="deptCode != null">
+				DEPT_CODE = #{deptCode},
+			</if>
+			<if test="managerId != null">
+				MANAGER_ID = #{managerId},
+			</if>
+			<if test="education != null">
+				EDUCATION = #{education},
+			</if>
+			<if test="job != null">
+				JOB = #{job},
+			</if>
+			<if test="jobStatus != null">
+				JOB_STATUS = #{jobStatus},
+			</if>
+			<if test="name != null">
+				NAME = #{name},
+			</if>
+			<if test="level != null">
+				LEVEL = #{level},
+			</if>
+			<if test="originAddr != null">
+				ORIGIN_ADDR = #{originAddr},
+			</if>
+			<if test="address != null">
+				ADDRESS = #{address},
+			</if>
+			<if test="linkAddress != null">
+				LINK_ADDRESS = #{linkAddress},
+			</if>
+			<if test="telephone != null">
+				TELEPHONE = #{telephone},
+			</if>
+			<if test="qq != null">
+				QQ = #{qq},
+			</if>
+			<if test="wechat != null">
+				WECHAT = #{wechat},
+			</if>
+			<if test="marry != null">
+				MARRY = #{marry},
+			</if>
+			<if test="sex != null">
+				SEX = #{sex},
+			</if>
+			<if test="email != null">
+				EMAIL = #{email},
+			</if>
+			<if test="salary != null">
+				SALARY = #{salary},
+			</if>
+			<if test="account != null">
+				ACCOUNT = #{account},
+			</if>
+			<if test="password != null">
+				PASSWORD = #{password},
+			</if>
+			<if test="showPassword != null">
+				SHOWPASSWORD = #{showPassword},
+			</if>
+			<if test="imAccount != null">
+				IM_ACCOUNT = #{imAccount},
+			</if>
+			<if test="icon != null">
+				ICON = #{icon},
+			</if>
+			<if test="school != null">
+				SCHOOL = #{school},
+			</if>
+			<if test="employTime != null">
+				EMPLOY_TIME = #{employTime},
+			</if>
+			<if test="lastLoginTime != null">
+				LAST_LOGIN_TIME = #{lastLoginTime},
+			</if>
+			<if test="status != null">
+				STATUS = #{status},
+			</if>
+			<if test="imStatus != null">
+				IM_STATUS = #{imStatus},
+			</if>
+			<if test="age != null">
+				AGE = #{age},
+			</if>
+			<if test="contract != null">
+				CONTRACT = #{contract},
+			</if>
+			<if test="workImg != null">
+				WORK_IMG = #{workImg},
+			</if>
+			<if test="idCard != null">
+				ID_CARD = #{idCard},
+			</if>
+			<if test="isBlack != null">
+				IS_BLACK = #{isBlack},
+			</if>
+			<if test="isDel != null">
+				IS_DEL = #{isDel},
+			</if>
+			UPDATE_TIME = now(),
+		</set>
+		where EID = #{eid}
+	</update>
+	<select id="findByAccount" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_USER
+		where ACCOUNT = #{account} and USER_TYPE != 11
+		<!--App端用户不能登录-->
+	</select>
+	<select id="findByImAccount" resultType="java.util.Map">
+		SELECT
+		s.ACCOUNT account,
+		s.EID eid,
+		s.DEPT_ID deptId,
+		s.DEPT_NAME deptName,
+		s.ICON icon,
+		s.IM_ACCOUNT imAccount,
+		s.EMAIL email,
+		s.`NAME` name,
+		s.SEX sex,
+		s.TELEPHONE telephone,
+		s.JOB job
+		FROM
+		`SYS_USER` s
+		WHERE
+		s.IM_ACCOUNT = #{imAccount} and s.COMPANY_ID = #{companyId}
+	</select>
+	<select id="findPagedCount" resultType="long">
+		SELECT count(*) FROM SYS_USER u 
+		where u.COMPANY_ID = #{criteria.l_companyId} and u.DEPT_CODE !='1000000000'
+		<if test="criteria.s_name != null">
+			and u.NAME like concat('%',#{criteria.s_name},'%')
+		</if>
+		<if test="criteria.s_deptName != null">
+			and u.DEPT_NAME like concat('%',#{criteria.s_deptName},'%')
+		</if>
+		<if test="criteria.s_jobStatus != null">
+			<choose>
+				<when test="criteria.s_jobStatus == 0">
+				</when>
+				<otherwise>
+					and u.JOB_STATUS = #{criteria.s_jobStatus}  
+				</otherwise>
+			</choose>
+		</if>
+	</select>
+	
+	<select id="findPagedList" resultType="java.util.HashMap">
+		SELECT
+		u.EID eid,
+		u.DEPT_NAME deptName,
+		u.NAME name,
+		u.AGE age,
+		u.JOB job,
+		 (CASE
+              WHEN u.SEX='1' THEN '男'
+              WHEN u.SEX='2' THEN '女'
+              end
+             ) sex,
+         (CASE
+              WHEN u.JOB_STATUS='1' THEN '实习'
+              WHEN u.JOB_STATUS='2' THEN '试用期'
+              WHEN u.JOB_STATUS='3' THEN '在职'
+              WHEN u.JOB_STATUS='4' THEN '离职'
+              WHEN u.JOB_STATUS='5' THEN '其他'
+              end
+             ) jobStatus
+		from
+		SYS_USER u 
+		where u.COMPANY_ID = #{criteria.l_companyId} and u.DEPT_CODE !='1000000000'
+		<if test="criteria.s_name != null">
+			and u.NAME like concat('%',#{criteria.s_name},'%')
+		</if>
+		<if test="criteria.s_deptName != null">
+			and u.DEPT_NAME like concat('%',#{criteria.s_deptName},'%')
+		</if>
+		<if test="criteria.s_jobStatus != null">
+			<choose>
+				<when test="criteria.s_jobStatus == 0">
+				</when>
+				<otherwise>
+					and u.JOB_STATUS = #{criteria.s_jobStatus}  
+				</otherwise>
+			</choose>
+		</if>
+		<choose>
+			<when test="criteria.s_orderBy == 'jobStatus_asc'">
+				order by u.JOB_STATUS asc
+			</when>
+			<when test="criteria.s_orderBy == 'jobStatus_desc'">
+				order by u.JOB_STATUS desc
+			</when>
+			<otherwise>
+				ORDER BY u.EMPLOY_TIME DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findCountByPhone"  resultType="java.lang.Long">
+		select
+		count(1)
+		from SYS_USER
+		where TELEPHONE = #{phone}
+		<if test="userType == 11">
+			and USER_TYPE = #{userType}
+		</if>
+		<if test="userType == 0">
+			and USER_TYPE != 11
+		</if>
+
+	</select>
+	
+	<select id="findByTypeCount" resultType="long">
+		select count(1) from SYS_USER u left join SYS_DEPARTMENT d on u.DEPT_ID=d.EID
+		where u.COMPANY_ID = #{criteria.l_companyId}
+        and ifnull(u.IS_DEL,0) != 1
+        <if test="criteria.i_type!=6">
+            and ifnull(u.IS_BLACK,0) != 1
+            and d.DTYPE = #{criteria.i_dtype}
+            <if test="criteria.i_type!=1">
+                and d.TYPE = #{criteria.i_type}
+            </if>
+        </if>
+		<if test="criteria.i_type == 6">
+			and ifnull(u.IS_BLACK,0) = 1
+			<if test="criteria.pid != null">
+				and d.DTYPE = #{criteria.i_dtype}
+				and (d.PID = #{criteria.pid} or d.PID in (select EID from SYS_DEPARTMENT where PID = #{criteria.pid}))
+			</if>
+		</if>
+		<if test="criteria.pid != null">
+			<if test="criteria.i_type == 3">
+				and d.PID = #{criteria.pid}
+			</if>
+			<if test="criteria.i_type == 4">
+				and d.PID in (select EID from SYS_DEPARTMENT where PID = #{criteria.pid})
+			</if>
+		</if>
+	</select>
+	<!-- 1=公司内部用户，2=食阁管理公司用户，3=食阁用户，4=摊位用户，5=食阁拥有者用户 -->
+	<select id="findByTypeList" resultType="java.util.Map">
+		select u.EID eid, u.ACCOUNT account, u.NAME name, u.DEPT_NAME deptName,u.JOB job,
+		case u.SEX
+			when 1 then '男' when 2 then '女'
+		end sex,
+		u.TELEPHONE telephone,
+		u.SHOWPASSWORD showPassword,
+		u.STATUS status,
+		u.USER_TYPE userType
+		from SYS_USER u left join SYS_DEPARTMENT d on u.DEPT_ID=d.EID
+		where u.COMPANY_ID = #{criteria.l_companyId}
+        and ifnull(u.IS_DEL,0) != 1
+        <if test="criteria.i_type!=6">
+            and ifnull(u.IS_BLACK,0) != 1
+            and d.DTYPE = #{criteria.i_dtype}
+            <if test="criteria.i_type!=1">
+                and d.TYPE = #{criteria.i_type}
+            </if>
+        </if>
+        <if test="criteria.i_type == 6">
+            and ifnull(u.IS_BLACK,0) = 1
+			<if test="criteria.pid != null">
+				and d.DTYPE = #{criteria.i_dtype}
+				and (d.PID = #{criteria.pid} or d.PID in (select EID from SYS_DEPARTMENT where PID = #{criteria.pid}))
+			</if>
+        </if>
+		<if test="criteria.pid != null">
+			<if test="criteria.i_type == 3">
+				and d.PID = #{criteria.pid}
+			</if>
+			<if test="criteria.i_type == 4">
+				and d.PID in (select EID from SYS_DEPARTMENT where PID = #{criteria.pid})
+			</if>
+		</if>
+	</select>
+
+	<select id="findAppUserCount" resultType="long">
+		select count(1) from SYS_USER
+		where COMPANY_ID = #{criteria.l_companyId}
+		and ifnull(IS_DEL,0) != 1
+		and USER_TYPE = 11
+	</select>
+	<select id="findAppUserList" resultType="java.util.Map">
+		select EID eid, ACCOUNT account, NAME `name`,ICON icon,
+		TELEPHONE telephone,
+		STATUS status
+		from SYS_USER
+		where COMPANY_ID = #{criteria.l_companyId}
+		and ifnull(IS_DEL,0) != 1
+		and USER_TYPE = 11
+	</select>
+	<select id="findAppDdxCount" resultType="long">
+		select count(1) from SYS_USER
+		where COMPANY_ID = #{criteria.l_companyId}
+		and ifnull(IS_DEL,0) != 1
+		and USER_TYPE = 11
+	</select>
+	<select id="findAppDdxList" resultType="java.util.Map">
+		select EID eid, ACCOUNT account, IM_ACCOUNT imAccount, NAME `name`,
+		TELEPHONE telephone,
+		IM_STATUS imStatus
+		from SYS_USER
+		where COMPANY_ID = #{criteria.l_companyId}
+		and ifnull(IS_DEL,0) != 1
+		and USER_TYPE = 11
+	</select>
+	
+	<select id="isExistAccount" resultType="long">
+		select count(1) from SYS_USER
+		where ACCOUNT = #{account}
+		<!-- <if test="companyId != null">
+		   and 	COMPANY_ID = #{companyId}
+		</if> -->
+		<if test="eid != null">
+			and EID != #{eid}
+		</if>
+	</select>
+	
+	<select id="getSysUserByLevel" resultType="java.util.Map">
+		select u.EID eid, u.NAME name, u.JOB job
+		from SYS_USER u
+		where u.COMPANY_ID = #{companyId} and LEVEL = #{level}
+	</select>
+	
+	
+	<select id="findDdxByTypeCount" resultType="long">
+		select count(1) from SYS_USER u left join SYS_DEPARTMENT d on u.DEPT_ID=d.EID
+		where u.COMPANY_ID = #{criteria.l_companyId}
+		and ifnull(u.IS_DEL,0) != 1
+		and ifnull(u.IS_BLACK,0) != 1
+		and d.DTYPE = #{criteria.i_dtype}
+		<if test="criteria.i_type!=1">
+			and d.TYPE = #{criteria.i_type}
+		</if>
+		<if test="criteria.pid != null">
+			and (d.PID = #{criteria.pid} or d.PID in (select EID from SYS_DEPARTMENT where PID = #{criteria.pid}))
+		</if>
+	</select>
+	<!-- type 1=公司内部用户，2=食阁管理公司用户，3=食阁用户，4=摊位用户，5=食阁拥有者用户 -->
+	<select id="findDdxByTypeList" resultType="java.util.Map">
+		select u.EID eid, u.IM_ACCOUNT imAccount, u.NAME name, u.DEPT_NAME deptName,u.JOB job,
+		case u.SEX
+		when 1 then '男' when 2 then '女'
+		end sex,
+		u.TELEPHONE telephone,
+		u.SHOWPASSWORD showPassword,
+		u.IM_STATUS imStatus
+		from SYS_USER u left join SYS_DEPARTMENT d on u.DEPT_ID=d.EID
+		where u.COMPANY_ID = #{criteria.l_companyId}
+		and ifnull(u.IS_DEL,0) != 1
+		and ifnull(u.IS_BLACK,0) != 1
+		and d.DTYPE = #{criteria.i_dtype}
+		<if test="criteria.i_type!=1">
+		  	and d.TYPE = #{criteria.i_type}
+		</if>
+		<if test="criteria.pid != null">
+			and (d.PID = #{criteria.pid} or d.PID in (select EID from SYS_DEPARTMENT where PID = #{criteria.pid}))
+		</if>
+	</select>
+	
+	<select id="findUsersByDeptId" resultType="java.util.Map">
+		select EID eid, NAME name, JOB job, IM_ACCOUNT imAccount,ICON icon, DEPT_NAME deptName, DEPT_ID deptId, USER_TYPE userType
+		from SYS_USER where COMPANY_ID = #{companyId}
+		<if test="deptId != -1">
+			and DEPT_ID = #{deptId}
+		</if>
+	</select>
+	
+	<select id="findKefuList" resultType="java.util.Map">
+		select EID eid, NAME name, JOB job, IM_ACCOUNT imAccount,IFNULL(ICON,"") icon, DEPT_NAME deptName, DEPT_ID deptId, USER_TYPE userType
+		from SYS_USER where USER_TYPE = 3 and STATUS =1
+	</select>
+	
+	<select id="findDetailUsers" resultType="java.util.Map">
+		SELECT 
+		  EID eid,
+		  NAME name,
+		  DEPT_NAME deptName,
+		  DEPT_ID deptId,
+		  JOB job,
+		  CONTRACT contract,
+		  MARRY marry,
+		  SEX sex,
+		  DATE_FORMAT(EMPLOY_TIME,'%Y-%m-%d') employTime,
+		  AGE age,
+		  SALARY salary,
+		  EDUCATION education,
+		  TELEPHONE telephone,
+		  JOB_STATUS jobStatus
+		  FROM SYS_USER 
+		  where COMPANY_ID = #{companyId}
+		  <if test="deptId != -1">
+			and DEPT_ID = #{deptId}
+		</if>
+	</select>
+	
+	<select id="findTotalCount" resultType="long">
+		select count(EID) from SYS_USER
+		where 1 = 1
+		<if test="companyId != null">
+			and COMPANY_ID = #{companyId}
+		</if>
+		<if test="code != null">
+			<!-- and DEPT_CODE like #{subCode}
+			and DEPT_CODE != #{code} -->
+			and DEPT_CODE like CONCAT(subDeptCode(#{code}),'%')
+		</if>
+	</select>
+	
+	<select id="findSexNum" resultType="Map">
+		select 
+		ifnull(sum(case SEX when 1 then 1 else 0 end), 0) male,
+		ifnull(sum(case SEX when 2 then 1 else 0 end), 0) female
+		from SYS_USER where 1 = 1
+		<if test="companyId != null">
+			and COMPANY_ID = #{companyId}
+		</if>
+		<if test="code != null">
+			<!-- and DEPT_CODE like #{subCode}
+			and DEPT_CODE != #{code} -->
+			and DEPT_CODE like CONCAT(subDeptCode(#{code}),'%')
+		</if>
+	</select>
+	
+	<select id="findEdicationNum" resultType="Map">
+		select ifnull(sum(case when EDUCATION  <![CDATA[<]]> 3 then 1 else 0 end), 0) dzyx,
+		ifnull(sum(case when EDUCATION = 3 then 1 else 0 end), 0) dz,
+		ifnull(sum(case when EDUCATION = 4 then 1 else 0 end), 0) bk,
+		ifnull(sum(case when EDUCATION = 5 then 1 else 0 end), 0) ss,
+		ifnull(sum(case when EDUCATION = 6 then 1 else 0 end), 0) bs
+		from SYS_USER where 1 = 1
+		<if test="companyId != null">
+			and COMPANY_ID = #{companyId}
+		</if>
+		<if test="code != null">
+			<!-- and DEPT_CODE like #{subCode}
+			and DEPT_CODE != #{code} -->
+			and DEPT_CODE like CONCAT(subDeptCode(#{code}),'%')
+		</if>
+	</select>
+	
+	<select id="findContractNum" resultType="Map">
+		select ifnull(sum(case when CONTRACT = 1 then 1 else 0 end), 0) zs,
+		ifnull(sum(case when CONTRACT = 2 then 1 else 0 end), 0) sx,
+		ifnull(sum(case when CONTRACT = 3 then 1 else 0 end), 0) gy,
+		ifnull(sum(case when CONTRACT = 4 then 1 else 0 end), 0) jz,
+		ifnull(sum(case when CONTRACT = 5 then 1 else 0 end), 0) sy
+		from SYS_USER where 1 = 1
+		<if test="companyId != null">
+			and COMPANY_ID = #{companyId}
+		</if>
+		<if test="code != null">
+			<!-- and DEPT_CODE like #{subCode}
+			and DEPT_CODE != #{code} -->
+			and DEPT_CODE like CONCAT(subDeptCode(#{code}),'%')
+		</if>
+	</select>
+	
+	<update id="updatePwdByEid" parameterType="com.system.model.SysUser">
+		update SYS_USER set
+		PASSWORD = #{password},
+		UPDATE_TIME = now()
+		where EID = #{eid}
+	</update>
+	
+	<update id="updatePwdByPhone" parameterType="com.system.model.SysUser">
+		update SYS_USER set
+		PASSWORD = #{password},
+		UPDATE_TIME = now()
+		where ACCOUNT = #{account}
+	</update>
+	
+	<select id="deptContactsCount" resultType="java.util.Map">
+		select DEPT_ID deptId, DEPT_NAME deptName, count(1) count
+		from SYS_USER where COMPANY_ID = #{companyId}
+		group by deptId
+	</select>
+	
+	<select id="findUsersBySubDeptCode" resultType="java.util.Map">
+		select EID eid, NAME name, JOB job, IM_ACCOUNT imAccount, DEPT_NAME deptName, DEPT_ID deptId
+		from SYS_USER where COMPANY_ID = #{companyId}
+		<if test="subCode != -1">
+			and DEPT_CODE like CONCAT(#{subCode},'%')
+		</if>
+	</select>
+	
+	<select id="findUsersByDeptIdAndManager" resultType="java.util.Map">
+		select EID eid, NAME name, JOB job, IM_ACCOUNT imAccount, DEPT_NAME deptName, DEPT_ID deptId
+		from SYS_USER where COMPANY_ID = #{companyId}
+		and LEVEL <![CDATA[<]]> 3
+		<if test="deptId != -1">
+			and DEPT_ID = #{deptId}
+		</if>
+	</select>
+	
+	<update id="updateCodeByDeptId">
+		update SYS_USER set DEPT_CODE = #{code}
+		where DEPT_ID = #{deptId}
+	</update>
+	
+	<select id="findUserByLevel" resultType="java.util.Map">
+		select
+		EID userId,
+		NAME userName
+		from
+		SYS_USER
+		where
+		COMPANY_ID = #{l_companyId} and STATUS != 2 and IM_STATUS != 0
+		<choose>
+			<when test="s_deptCode != null">
+				AND DEPT_CODE like CONCAT(#{s_deptCode},'%')
+			</when>
+			<otherwise>
+				AND EID = #{l_userId}
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	<select id="findLatelyBirthCount" resultType="int"> 
+		select count(1) from (
+			select NAME,to_days(CONCAT(DATE_FORMAT(now(), '%Y'),substring(ID_CARD, 11,4))) - to_days(now()) diff 
+			from SYS_USER where COMPANY_ID = #{companyId}
+		) a where a.diff >= 0 and a.diff <![CDATA[<=]]> 7
+	</select>
+	
+	<select id="findLatelyBirthList" resultType="java.util.HashMap">
+		select * from (
+			select NAME name, DEPT_NAME deptName, ID_CARD idCard, AGE age,
+			case SEX
+				when 1 then '男' when 2 then '女'
+			end sex, JOB job,
+			CONCAT(DATE_FORMAT(now(), '%Y'),'-',substring(ID_CARD, 11,2),'-',substring(ID_CARD, 13,2)) birthDay,
+			to_days(CONCAT(DATE_FORMAT(now(), '%Y'),substring(ID_CARD, 11,4))) - to_days(now()) diff 
+			from SYS_USER where COMPANY_ID = #{companyId}
+		) a where a.diff >= 0 and a.diff <![CDATA[<=]]> 7 order by a.diff
+	</select>
+	
+	
+	<select id="findLatelyContractCount" resultType="int"> 
+		select count(1) from (
+			select t1.EID,
+			to_days(t2.SIGN_EXPIRE) - to_days(now()) expireDays
+			from SYS_USER t1 LEFT JOIN T_STAFF_CONTRACT t2 on t1.EID = t2.USER_ID and t2.IS_USE = 1
+			where t1.COMPANY_ID = #{companyId}
+		) a where a.expireDays <![CDATA[<=]]> 15
+	</select>
+	
+	<select id="findLatelyContractList" resultType="java.util.HashMap">
+		select * from (
+			select t1.EID eid, t1.`NAME` name, t1.DEPT_NAME deptName,DATE_FORMAT(t2.SIGN_EXPIRE,'%Y-%m-%d') expireTime,
+			to_days(t2.SIGN_EXPIRE) - to_days(now()) expireDays
+			from SYS_USER t1 LEFT JOIN T_STAFF_CONTRACT t2 on t1.EID = t2.USER_ID and t2.IS_USE = 1
+			where t1.COMPANY_ID = #{companyId}
+		) a where a.expireDays <![CDATA[<=]]> 15
+	</select>
+	
+	
+	<select id="countUseNum" resultType="int">
+		SELECT count(*) FROM SYS_USER u 
+		where u.STATUS = 1 and COMPANY_ID = #{cid}
+	</select>
+	
+	<select id="countImUseNum" resultType="int">
+		SELECT count(*) FROM SYS_USER u 
+		where u.IM_STATUS = 1 and COMPANY_ID = #{cid}
+	</select>
+	
+	<update id="closeUser">
+		UPDATE SYS_USER u
+		SET 
+			STATUS = 2,
+			JOB_STATUS = 4,
+		 	IM_STATUS = 0
+		WHERE 
+		EID = #{ygId}
+	</update>
+	
+	<select id="findImAccountsByIds" resultType="String">
+		SELECT IM_ACCOUNT imAccount FROM SYS_USER u 
+		where u.EID in 
+		<foreach collection="list" item="item" separator=",">
+		(
+			#{item}
+		)
+		</foreach>
+	</select>
+	
+	<select id="findDriveTokenByImAccounts" resultType="map">
+		select
+		DIRIVE_TOKEN diriveToken, TELEPHONE telephone, IM_ACCOUNT imAccount,
+		BUS_MESS busMess, CHAT_MESS chatMess
+		from SYS_USER
+		where IM_ACCOUNT IN 
+		<foreach item="item"  collection="list" open="(" separator="," close=")"> 
+    		#{item} 
+		</foreach> 
+	</select>
+	
+	<update id="updateMess" parameterType="com.system.model.SysUser">
+		update SYS_USER
+		<set>
+			<if test="busMess != null">
+				BUS_MESS = #{busMess},
+			</if>
+			<if test="chatMess != null">
+				CHAT_MESS = #{chatMess},
+			</if>
+			UPDATE_TIME = now(),
+		</set>
+		where EID = #{eid}
+	</update>
+	<!-- 获取通讯录信息 -->
+	<select id="findUsers" resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List" />
+		from SYS_USER
+		where COMPANY_ID = #{companyId}
+	</select>
+	
+	<select id="findTeamByDeptCount" resultType="long">
+		select count(0)
+		from SYS_USER where COMPANY_ID = #{criteria.l_companyId}
+			and DEPT_ID = #{criteria.l_deptId}
+	</select>
+	<select id="findTeamByDeptList" resultType="java.util.Map">
+		select EID eid, NAME name, JOB job,DEPT_NAME deptName,USER_TYPE userType,AGE age,
+		(case SEX
+			when 1 then '男' when 2 then '女'
+		end) sex
+		from SYS_USER where COMPANY_ID = #{criteria.l_companyId}
+			and DEPT_ID = #{criteria.l_deptId}
+	</select>
+	
+	<select id="findUsersByEids" resultType="map">
+		select
+		DIRIVE_TOKEN diriveToken, TELEPHONE telephone, IM_ACCOUNT imAccount,
+		BUS_MESS busMess, CHAT_MESS chatMess
+		from SYS_USER
+		where EID IN 
+		<foreach item="item"  collection="list" open="(" separator="," close=")"> 
+    		#{item} 
+		</foreach> 
+	</select>
+	
+	<select id="findUserByDeptId"  resultType="java.util.Map">
+		select
+		EID eid,
+		NAME name,
+		DEPT_NAME deptName,
+		JOB job,
+		ICON icon
+		from SYS_USER
+		where DEPT_ID = #{deptId} and STATUS = 1
+	</select>
+	<select id="countDeptNum" resultType="map">
+		select DEPT_ID deptId, DEPT_NAME deptName, count(1) num from SYS_USER 
+		where COMPANY_ID = #{companyId}
+		group by DEPT_ID
+	</select>
+	
+	
+	<select id="findAgeData"  resultType="java.util.Map">
+	<![CDATA[
+		select
+			SUM(case when year(str_to_date(BIRTH_DATE,'%Y-%m-%d'))>=2000 then 1 else 0 end) 'a',
+			SUM(case when year(str_to_date(BIRTH_DATE,'%Y-%m-%d'))>=1990 and year(str_to_date(BIRTH_DATE,'%Y-%m-%d'))<2000 then 1 else 0 end) 'b',
+			SUM(case when year(str_to_date(BIRTH_DATE,'%Y-%m-%d'))>=1980 and year(str_to_date(BIRTH_DATE,'%Y-%m-%d'))<1990 then 1 else 0 end) 'c',
+			SUM(case when year(str_to_date(BIRTH_DATE,'%Y-%m-%d'))>=1970 and year(str_to_date(BIRTH_DATE,'%Y-%m-%d'))<1980 then 1 else 0 end) 'd',
+			SUM(case when year(str_to_date(BIRTH_DATE,'%Y-%m-%d'))>=1960 and year(str_to_date(BIRTH_DATE,'%Y-%m-%d'))<1970 then 1 else 0 end) 'e'
+		from SYS_USER
+		where COMPANY_ID = #{l_companyId}
+			  and STATUS = 1 and BIRTH_DATE is not null ]]>
+	</select>
+	
+	<select id="findIncomeData"  resultType="java.util.Map">
+		<![CDATA[
+		select
+		   SUM(case when a.money<5000 then 1 else 0 end) 'a',
+		   SUM(case when a.money>=5000 and a.money<7000 then 1 else 0 end) 'b',
+		   SUM(case when a.money>=7000 and a.money<9000 then 1 else 0 end) 'c',
+		   SUM(case when a.money>=9000 and a.money<10000 then 1 else 0 end) 'd',
+		   SUM(case when a.money>=10000 then 1 else 0 end) 'e'
+		from
+		    (select e.USER_ID,avg(e.TOTAL) money from T_EMP_INCOME e,SYS_USER u
+	         where e.COMPANY_ID = #{l_companyId} and e.USER_ID = u.EID and u.STATUS = 1 GROUP BY e.USER_ID) a
+	    ]]>
+	</select>
+	<select id="findEducationData"  resultType="java.util.Map">
+		<![CDATA[
+			select 
+    			SUM(case when EDUCATION <= 3 then 1 else 0 end) 'a',
+				SUM(case when EDUCATION = 4 then 1 else 0 end) 'b',
+				SUM(case when EDUCATION = 5 then 1 else 0 end) 'c',
+				SUM(case when EDUCATION = 6 then 1 else 0 end) 'd'
+			from SYS_USER
+			where COMPANY_ID = #{l_companyId} and STATUS = 1 
+	    ]]>
+	</select>
+	<select id="findContractData"  resultType="java.util.Map">
+		<![CDATA[
+			select 
+				t2.s 'a',
+				SUM(case when t1.s=1 then 1 else 0 end) 'b',
+				SUM(case when t1.s=2 then 1 else 0 end) 'c',
+				SUM(case when t1.s>=3 then 1 else 0 end) 'd'
+			from
+				(select e.BID userId,count(e.CONTRACT_FORM) s
+					from T_EMP_LABOR_CONTRACT e,SYS_USER u
+					where e.BID = u.EID and u.COMPANY_ID=#{l_companyId} and CONTRACT_FORM != 5 GROUP BY e.BID) t1,
+			(select count(0) s from SYS_USER where COMPANY_ID=#{l_companyId} and CONTRACT =5) t2
+	    ]]>
+	</select>
+
+</mapper>

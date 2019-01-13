@@ -1,0 +1,57 @@
+.CX_share_wlL{
+     width: 32px;
+	 float:left;
+	/* margin-left:-32px;*/
+	 height:53px;/*高度是否可以控制制动*/
+}
+.CX_share_wlLx{
+     width:2px;
+	 background-color:#A9CCF1;
+	/* min-height:70px;*/
+	 margin-left:8px;
+	 float:left;
+	 height:100%;
+}
+.CX_share_wlLd{
+     width:9px;
+	 height:9px;
+	 position:relative;
+	 top: 17px;
+     left: -3px;
+}
+.CX_share_wlLjt{
+     width:13px;
+	 height:15px;
+	 float:right;
+	 position: relative;
+     top: 11px;
+}
+.CX_share_wlR{
+     width: calc(100% - 34px);
+	 width: -moz-calc(100% - 34px);
+	 width: -webkit-calc(100% - 34px);
+	 /*width: 88%;*/
+	 float:left;
+}
+.CX_share_wlRn{
+     width: 99%;
+	 float:left;
+     background-color:rgba(204, 204, 204, 0.16);
+	 padding:12px;
+	 border-radius:4px;
+	 font-size:1em;
+	 color:#000;
+/* 	 height: 40px; */
+	 border: solid 1px #A9CCF1;
+}
+.CX_share_wlRnL{
+     width:18%;
+	 float:left;
+}
+.CX_share_wlRnR{
+     width:82%;
+	 float:left;
+}
+#query_result .CX_share_wz {
+	padding: 0px 0px;
+}

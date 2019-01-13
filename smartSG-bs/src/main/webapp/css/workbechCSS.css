@@ -1,0 +1,340 @@
+﻿* {
+	margin: 0px;
+	padding: 0px;
+}
+
+#echartDiv{
+	width: 120px;
+	height: 120px;	
+}
+
+#total_span{
+	color: #2CAAFE;
+	position:absolute;
+	top: 46px;
+	font-size: 20px;
+	display: inline-block;
+	width: 48px;
+	left: 36px;
+	text-align: center;
+}
+
+img, button {
+	border: 0px;
+}
+
+a {
+	text-decoration: none;
+}
+
+ul , ol, li {
+	list-style: none;
+}
+
+body {
+	height: 100%;
+	font-family: '微软雅黑', arial, sans-serif;
+	font-size: 14px;
+	color: #464646;
+}
+
+.clear {
+	clear: both;
+}
+.mainRight-tab-conW {
+	width: -webkit-calc(100% - 40px);
+	width: calc(100% - 40px);
+	width: -moz-calc(100% - 40px);
+	height: -webkit-calc(100% - 20px);
+	height: calc(100% - 20px);
+	height: -moz-calc(100% - 20px);
+	background-color:#fcfcfc;
+	padding: 20px 20px 0px 20px;
+
+}
+
+.card-widgets{
+	width: 100%;
+	min-width: 1010px;
+}
+.task-card1{
+	width: -webkit-calc(28% - 2px);
+	width: calc(28% - 2px);
+	width: -moz-calc(28% - 2px);
+	float: left;
+	min-width:280px;
+	height: 260px;
+	background-color: #fff;
+	border:1px solid #f5f5f5;
+}
+.task-card2{
+	width: -webkit-calc(44% - 26px);
+	width: calc(44% - 26px);
+	width: -moz-calc(44% - 26px);
+	margin:0 12px;
+	float: left;
+	min-width:400px;
+	height: 260px;
+	background-color: #fff;
+	border:1px solid #f5f5f5;
+}
+.task-card3{
+	width: -webkit-calc(50% - 2px);
+	width: calc(50% - 2px);
+	width: -moz-calc(50% - 2px);
+	float: left;
+	min-width:494px;
+	height: 260px;
+	background-color: #fff;
+	border:1px solid #f5f5f5;
+}
+.task-card4{
+	width: -webkit-calc(50% - 14px);
+	width: calc(50% - 14px);
+	width: -moz-calc(50% - 14px);
+	float: left;
+	min-width:484px;
+	margin-left: 12px;
+	height: 260px;
+	background-color: #fff;
+	border:1px solid #f5f5f5;
+}
+.task-title{
+	font-size: 15px;
+	font-weight: bold;
+	padding:10px 15px;
+	line-height: 24px;
+	position: relative;
+}
+
+.today-date{
+	font-size: 13px;
+	position: absolute;
+	right: 10px;
+	font-weight: normal;
+}
+.task-title .icon{
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	vertical-align: middle;
+	margin-right: 5px;
+
+}
+.task-title .kqqd{
+	background: url(../images/workpench/clock.png) center no-repeat;
+
+}
+.task-title .dbsy{
+	background: url(../images/workpench/affairs.png) center no-repeat;
+	
+}
+.task-title .ggtz{
+	background: url(../images/workpench/notice.png) center no-repeat;
+
+}
+.task-title .rcap{
+	background: url(../images/workpench/schedule.png) center no-repeat;
+
+}
+.task-title .xmrw{
+	background: url(../images/workpench/task.png) center no-repeat;
+
+}
+.task-title .more{
+	font-size: 13px;
+	position: absolute;
+	right: 10px;
+	font-weight: normal;
+	color: #3da8f5;
+	text-decoration: underline;
+}
+
+.task-content{
+	font-size: 14px;
+	padding:0 15px;
+}
+.chockin,.chockin{
+	height: 102px
+}
+.location{
+	margin-top: 10px;
+	padding-left: 38px;
+	font-size: 13px;
+	line-height: 28px;
+}
+.punch-card{
+	width: 72px;
+	height: 32px;
+	display: inline-block;
+	background-color: #3da8f5;
+	font-size: 12px;
+	color:#fff;
+	border-radius: 50%;
+	padding:20px 0;
+	cursor: pointer;
+}
+
+.affairs-title ul li{
+	float: left;
+	margin-right: 30px;
+	line-height: 28px;
+	font-weight: bold;
+}
+.affairs-title ul li span,.affairs-texts ul li span{
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	margin:2px 6px;
+}
+.blue{
+	background-color: #2caafe;
+	
+}
+.yellow{
+	background-color: #f67d20;
+
+}
+.green{
+	background-color: #62ca0d;
+
+}
+.grey{
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	margin:2px 6px;
+	background-color: #464646;
+
+}
+.affairs-charts{
+	width: 100px;
+	height: 100px;
+	float: left;
+	font-size: 30px;
+	color: #2caafe;
+	position:relative;
+	/* background:url(../images/workpench/charts.png) center no-repeat; */
+	 margin:14px 0 0 0px; 
+}
+.affairs-texts{
+	float: left;
+	margin-left: 22px;
+	line-height: 25px;
+}
+
+
+.notices  li{
+	line-height: 34px;
+}
+.notices .notices-date{
+	float: right;
+	font-size: 13px;
+}
+
+.task-content .plan-list li{
+	position: relative;
+    padding: 24px 0 0px 20px;
+    margin-left: 10px;
+    line-height: 18px;
+    border-left: 1px solid #a2d9ff;
+
+}
+
+.task-content .plan-list li:first-child{
+	border-left:0px;
+}
+.task-content .plan-list li .plan-icon{
+	position: absolute;
+    left: -9px;
+    top: 63%;
+    width: 18px;
+    height: 18px;
+    background: url(../images/workpench/time.png) center no-repeat;
+}
+.task-content .plan-list li .plan-time{
+	margin-right: 10px;
+	position: relative;
+    top: 2px;
+    display: inline-block;
+    vertical-align: middle;
+    color: #3da8f5;
+}
+.task-content .plan-list li .plan-text{
+	max-width: -webkit-calc(100% - 50px);
+	position: relative;
+    top: 2px;
+    display: inline-block;
+    vertical-align: middle;
+    
+}
+.plan-add{
+	position: absolute;
+	left:242px;
+	bottom: 14px;
+	z-index: 999;
+	cursor: pointer;
+}
+.task-content .mytable{
+	width: 100%;
+	border-collapse: collapse;
+}
+.task-content .mytable thead th{
+	background-color: #f5f5f5;
+	height: 35px;
+	line-height: 35px;
+	text-align: left;
+	padding:0 8px;
+	font-size: 14px;
+}
+.task-content .mytable tbody td{
+	
+	height: 35px;
+	line-height: 35px;
+	padding:0 8px;
+}
+
+
+/*新增css开始*/
+.task-card5{
+	width: -webkit-calc(25% - 11px);
+	width: calc(25% - 11px);
+	width: -moz-calc(25% - 11px);
+	float: left;
+	margin-left: 12px;
+	height: 270px;
+	background-color: #fff;
+	border:1px solid #f5f5f5;
+}
+.task-card5:first-child{
+	margin-left: 0px;
+}
+
+.task-card5 .stats-title{
+	margin-left: 95px;
+	margin-top: 25px;
+	font-size: 15px;
+	/* font-weight: bold; */
+	line-height: 40px;
+
+}
+.task-card5 .stats-icons{
+	float: left;
+	width:80px;
+	height: 80px;
+	text-align: center;
+	vertical-align: middle;
+}
+.task-card5 .stats-number{
+	float: left;
+	font-size: 32px;
+	/* line-height: 80px; */
+	 line-height: 55px; 
+	margin-left: 10px;
+}
+.task-card5 .stats-items ul li{
+	line-height: 32px;
+}
+/*新增css结束*/

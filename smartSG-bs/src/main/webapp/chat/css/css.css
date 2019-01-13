@@ -1,0 +1,75 @@
+/* CSS Document */
+body, html {
+    min-height: 100%;
+}
+.CX_Container {
+    margin:0px auto;
+    min-width:300px;
+	max-width:768px;
+	overflow:hidden;
+}
+@media screen and (min-width: 300px) and (max-width: 768px) {
+.CX_Container {width: 96%;margin-left:2%;margin-right:2%;}
+} 
+
+.CX_pageCon_Div {
+    margin:0 auto;
+    clear: both;
+    font-family:Arial,"Hiragino Sans GB",md-hsgb,"Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;
+    overflow: hidden;}
+	
+.CX_con {clear: both;}
+
+/*文章*/
+.CX_conTitle {
+    font-size: 1.5em;
+	line-height: 1.2em;
+    padding: 25px 0px 15px;
+}
+	
+.CX_con p {
+    line-height: 1.5em;
+    font-size: 1.2em/1.5em;
+    color: #646464;
+    margin: 0px;
+}
+
+.pTop25 {
+    padding-top: 25px !important;
+}
+.pBottom25 {
+    padding-bottom: 10px !important;
+}
+
+/*表格*/
+.CX_share{width:98%;}
+.CX_share_top{padding: 0px 5px 0px 5px;}
+.CX_share_middle{width:96%;padding: 0px 5px 0px 5px;}
+.CX_share_bottom{width:96%;padding: 5px 5px 10px 5px;}
+.CX_share_wz{width:100%;font-size:18px;}
+.CX_share_wzL{width:49%;float:left;}
+.CX_share_wzr{width:49%;float:right;}
+.CX_share_wzLong{width:100%;float:left;}
+
+.CX_hr1{height:1px;width:100%;background-color:#959c94;margin:0.4em 0;}
+.CX_hr2{height:2px;width:100%;background-color:#00482a;margin:0.4em 0;}
+.CX_hr3{height:2px;width:100%;background-color:#959c94;margin:0.4em 0;}
+.CX_hr4{height:1px;width:100%;background-color:#A5ACA4;margin:0px;}
+
+.CX_line1{border-right:solid 1px #ccc;}
+
+.CX_img{border-radius:180%;width:13%;}
+
+.CX_TopTitle{background-color:#004528;width:100%;padding-top: 10px;height: 30px;color: rgb(255, 255, 255);text-align: center;}
+
+.CX_TopTitle_Y{width:100%;height:23px;}
+.CX_TopTitle_Y_span{font-size:0.9em;float:left;}
+
+/*销售订单*/
+.CX_lm1{background-color:#DCDCDC;float:left;line-height: 2.3em;padding:0px 5px;border-right:solid 1px #CACBC6;}
+.CX_lm2{line-height: 2.3em;padding:0px 5px;float:left;}
+
+.CX_lm_qq{width:20px;
+          height:20px;
+		  background-color:#004528;
+		  border-radius:180%;float:left;padding:3px;margin-top:4px;line-height: 1.3em;text-align:center;color:#fff;margin-right: 16px;}

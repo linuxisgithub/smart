@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SgFieldDao">
+	<resultMap id="BaseResultMap" type="com.sg.model.SgField">
+		<id column="EID" property="eid" />
+		<result column="BID" property="bid" />
+		<result column="NAME" property="name" />
+		<result column="DEFAULT_VALUE" property="defaultValue" />
+		<result column="MY_VALUE" property="myValue" />
+		<result column="FIELD_TYPE" property="fieldType" />
+		<result column="IS_SHOW" property="isShow" />
+		<result column="IS_DEL" property="isDel" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="UPDATE_TIME" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, BID, NAME, DEFAULT_VALUE, MY_VALUE, FIELD_TYPE, IS_SHOW,
+		IS_DEL, DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') CREATE_TIME, DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d %H:%i:%s') UPDATE_TIME
+	</sql>
+
+	<insert id="insert" parameterType="com.sg.model.SgField" useGeneratedKeys="true" keyProperty="eid">
+		insert into T_SG_FIELD (
+			BID, NAME, DEFAULT_VALUE, MY_VALUE, FIELD_TYPE, IS_SHOW,
+			IS_DEL, CREATE_TIME
+		) values (
+			#{bid}, #{name}, #{defaultValue}, #{myValue}, #{fieldType}, #{isShow},
+			#{isDel}, now()
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_SG_FIELD
+		where EID = #{eid}
+	</select>
+
+	<select id="findByBid" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_SG_FIELD
+		where BID = #{bid} and IFNULL(IS_DEL,0) != 1
+		and IS_SHOW = 1
+	</select>
+
+	<update id="update" parameterType="com.sg.model.SgField">
+		update T_SG_FIELD
+		<set>
+			<if test="bid != null">
+				BID = #{bid},
+			</if>
+			<if test="name != null">
+				NAME = #{name},
+			</if>
+			<if test="defaultValue != null">
+				DEFAULT_VALUE = #{defaultValue},
+			</if>
+            <if test="myValue != null">
+                MY_VALUE = #{myValue},
+            </if>
+			<if test="fieldType != null">
+				FIELD_TYPE = #{fieldType},
+			</if>
+			<if test="isShow != null">
+				IS_SHOW = #{isShow},
+			</if>
+			<if test="isDel != null">
+				IS_DEL = #{isDel},
+			</if>
+				UPDATE_TIME = now()
+		</set>
+		where EID = #{eid}
+	</update>
+
+	<select id="findPagedCount" resultType="long">
+		select
+		count(0)
+		from T_SG_FIELD
+		where IFNULL(IS_DEL,0) != 1
+		and BID = #{criteria.bid}
+	</select>
+
+	<select id="findPagedList" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_SG_FIELD
+		where IFNULL(IS_DEL,0) != 1
+				and BID = #{criteria.bid}
+		<![CDATA[order by CREATE_TIME desc]]>
+	</select>
+
+
+</mapper>

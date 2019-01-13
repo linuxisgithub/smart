@@ -1,0 +1,188 @@
+* {
+	margin: 0px;
+	padding: 0px;
+	box-sizing: border-box;
+}
+
+a {
+	text-decoration: none;
+}
+
+img {
+	border: 0px;
+}
+
+input, label, select, option, textarea, button, fieldset, legend {
+	font-family: "Microsoft YaHei", arial, ans-serif;
+}
+
+html, body {
+	color: #000;
+	font-size: 14px;
+	font-family: "Microsoft YaHei", arial, ans-serif;
+}
+
+.wraper {
+	min-width: 320px;
+	max-width: 640px;
+	margin: 0 auto;
+}
+
+.page-title {
+	font-size: 1.6rem;
+	font-weight: bold;
+	text-align: center;
+	margin: 20px 0 10px 0;
+}
+
+.profile {
+	padding: 0 2rem;
+}
+
+.profile .info {
+	width: 100%;
+	height: 54px;
+	padding: 8px 0 4px 0;
+	line-height: 38px;
+	border-bottom: 1px solid #d4d4d4;
+}
+
+.profile .info-title {
+	float: left;
+	width: 28%;
+	padding-left: 10px;
+}
+
+.profile label {
+	font-weight: bold;
+}
+
+.profile .info-input {
+	float: right;
+	width: 72%;
+	padding-right: 6px;
+}
+
+.profile .info-input input {
+	border: 0;
+	width: 63%;
+	font-size: 1rem;
+	line-height: 38px;
+}
+
+.profile .img-code {
+	width: 35%;
+	height: 38px;
+	display: inline-block;
+}
+
+.profile .img-code img {
+	border: 0px;
+	width: 100%;
+	height: 100%;
+	vertical-align: middle;
+	margin-left: 5px;
+	margin-bottom: 4px;
+}
+
+.profile .phone-code {
+	width: 42%;
+	height: 38px;
+	display: inline-block;
+	background-color: #4F6EA5;
+	color: #fff;
+	text-align: center;
+	line-height: 38px;
+	vertical-align: middle;
+	margin-left: 5px;
+	margin-bottom: 4px;
+}
+
+.save-btn {
+	margin-top: 15px;
+}
+
+.save-btn button {
+	width: 100%;
+	height: 40px;
+	background-color: #4F6EA5;
+	color: #fff;
+	font-size: 1.3rem;
+	line-height: 40px;
+	text-align: center;
+	display: inline-block;
+	border: 0;
+	-webkit-appearance: none;
+	cursor: pointer;
+}
+
+/*邀请页面start*/
+.txt {
+	padding-top: 40%;
+	font-size: 1.8rem;
+	text-align: center;
+}
+
+.accept-btn {
+	margin-top: 50px;
+	text-align: center;
+}
+
+.accept-btn button {
+	width: 40%;
+	height: 60px;
+	max-width: 200px;
+	background-color: #4F6EA5;
+	color: #fff;
+	font-size: 1.6rem;
+	line-height: 40px;
+	text-align: center;
+	display: inline-block;
+	border: 0;
+	border-radius: 3px;
+	-webkit-appearance: none;
+}
+
+.save-btn a, .accept-btn a {
+	color: #439015;
+	font-size: 1.2rem;
+}
+/*邀请页面end*/
+
+/*下载页面start*/
+.context {
+	padding: 45% 1rem 0 1rem;
+	font-size: 1.2rem;
+}
+
+.div-left {
+	width: 50%;
+	float: left;
+	text-align: center;
+}
+
+.icon img {
+	width: 43%;
+	margin-right: 24px;
+	margin-bottom: .5rem;
+}
+
+.download {
+	width: 80%;
+	margin-top: 15px;
+	text-align: center;
+	margin-left: 1.25rem;
+}
+
+.download button {
+	border: 0px;
+	background: #fff;
+	cursor: pointer;
+}
+
+.download img {
+	width: 100%;
+	max-width: 274px;
+	height: auto;
+}
+/*下载页面end*/

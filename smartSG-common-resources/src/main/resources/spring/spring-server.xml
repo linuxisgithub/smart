@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	   http://www.springframework.org/schema/context
+	   http://www.springframework.org/schema/context/spring-context-4.2.xsd
+	   http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd"
+       default-autowire="byName" default-lazy-init="false">
+
+    <context:property-placeholder ignore-unresolvable="true" location="classpath*:servers.properties"/>
+
+	<!-- redis -->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="${redis_maxIdle}"/>
+        <property name="maxWaitMillis" value="${redis_maxWait}"/>
+    </bean>
+
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="hostName" value="${redis_ip}"/>
+        <property name="port" value="${redis_port}"/>
+        <property name="password" value="${redis_pwd}"/>
+        <property name="timeout" value="${redis_timeout}"/>
+        <property name="poolConfig" ref="jedisPoolConfig"/>
+        <property name="database" value="2"/>
+    </bean>
+
+    <bean id="jedisDefaultSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="jedisConnectionFactory"/>
+        <property name="defaultSerializer" ref="jedisDefaultSerializer"/>
+    </bean>
+
+	<!--rabbit  -->
+    <rabbit:connection-factory id="connectionFactory" addresses="${rabbit_mq_ip}" username="${rabbit_mq_username}"
+                               password="${rabbit_mq_pwd}" channel-cache-size="10"/>
+
+    <rabbit:admin connection-factory="connectionFactory"/>
+
+    <rabbit:template id="smartSGTemplate" connection-factory="connectionFactory"/>
+    
+	<!-- im推送队列：erpMessageQueue -->
+    <rabbit:queue name="erpMessageQueue" durable="true" auto-delete="false" exclusive="false"/>
+
+
+	<!-- 短信队列 -->
+	<rabbit:queue name="smartSG_msmQueue" durable="true" auto-delete="false" exclusive="false" />
+	<!-- 短信队列监听 concurrency 代表有3个消费者同时监听，prefetch代表每个消费者从队列中预拿2个消息阻塞等待消费 -->
+	<bean id="messageReceiver" class="javacommon.util.listener.MsmListener" />
+	<rabbit:listener-container connection-factory="connectionFactory" concurrency="3" prefetch="2">
+		<rabbit:listener queues="smartSG_msmQueue" ref="messageReceiver" />
+	</rabbit:listener-container>
+	
+	
+	<!-- 苹果推送队列 -->
+	<rabbit:queue name="demo_apnsQueue" durable="true" auto-delete="false" exclusive="false" />
+	<!-- apns队列监听 concurrency 代表有3个消费者同时监听，prefetch代表每个消费者从队列中预拿2个消息阻塞等待消费  -->
+	<bean id="apnsReceiver" class="javacommon.util.listener.ApnsListener" />
+	<rabbit:listener-container connection-factory="connectionFactory" concurrency="3" prefetch="2">
+		<rabbit:listener queues="demo_apnsQueue" ref="apnsReceiver" />
+	</rabbit:listener-container> 
+    
+</beans>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ImgDao">
+	<resultMap id="BaseResultMap" type="com.sg.model.Img">
+		<id column="EID" property="eid" />
+		<result column="USER_ID" property="userId" />
+		<result column="PATH" property="path" />
+		<result column="SRC_NAME" property="srcName" />
+		<result column="TYPE" property="type" />
+		<result column="BID" property="bid" />
+		<result column="NAME" property="name" />
+		<result column="FILE_SIZE" property="fileSize" />
+		<result column="DTYPE" property="dtype" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="UPDATE_TIME" property="updateTime" />
+		<result column="IS_DEL" property="isDel" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, USER_ID, PATH, SRC_NAME, TYPE, BID, 
+		NAME, FILE_SIZE, DTYPE, DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') CREATE_TIME, DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d %H:%i:%s') UPDATE_TIME, IS_DEL
+	</sql>
+
+	<insert id="insert" parameterType="com.sg.model.Img" useGeneratedKeys="true" keyProperty="eid">
+		insert into T_IMG (
+			USER_ID, PATH, SRC_NAME, TYPE, BID, 
+			NAME, FILE_SIZE, DTYPE, CREATE_TIME, IS_DEL
+		) values (
+			#{userId}, #{path}, #{srcName}, #{type}, #{bid}, 
+			#{name}, #{fileSize}, #{dtype}, now(), #{isDel}
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_IMG
+		where EID = #{eid}
+	</select>
+
+	<select id="findByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_IMG
+		where NAME = #{name}
+	</select>
+
+	<select id="findByBidAndDtype" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_IMG
+		where BID = #{bid} and DTYPE = #{dtype} and IFNULL(IS_DEL,0) != 1
+	</select>
+
+	<update id="update" parameterType="com.sg.model.Img">
+		update T_IMG
+		<set>
+			<if test="userId != null">
+				USER_ID = #{userId},
+			</if>
+			<if test="path != null">
+				PATH = #{path},
+			</if>
+			<if test="srcName != null">
+				SRC_NAME = #{srcName},
+			</if>
+			<if test="type != null">
+				TYPE = #{type},
+			</if>
+			<if test="bid != null">
+				BID = #{bid},
+			</if>
+			<if test="name != null">
+				NAME = #{name},
+			</if>
+			<if test="fileSize != null">
+				FILE_SIZE = #{fileSize},
+			</if>
+			<if test="dtype != null">
+				DTYPE = #{dtype},
+			</if>
+			<if test="isDel != null">
+				IS_DEL = #{isDel},
+			</if>
+			UPDATE_TIME = now()
+		</set>
+		where EID = #{eid}
+	</update>
+
+</mapper>

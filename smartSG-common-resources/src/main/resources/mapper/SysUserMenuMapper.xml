@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysUserMenuDao">
+	<resultMap id="BaseResultMap" type="com.system.model.SysUserMenu">
+		<id column="EID" property="eid" />
+		<result column="MENU_ID" property="menuId" />
+		<result column="MENU_NAME" property="menuName" />
+		<result column="COMPANY_ID" property="companyId" />
+		<result column="KIND" property="kind" />
+		<result column="USE_ID" property="useId" />
+		<result column="USE_NAME" property="useName" />
+		<result column="USE_DEPT_NAME" property="useDeptName" />
+		<result column="APPROVAL_ID" property="approvalId" />
+		<result column="GRANT_BY" property="grantBy" />
+		<result column="GRANT_TYPE" property="grantType" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, MENU_ID, MENU_NAME, COMPANY_ID, KIND, USE_ID, 
+		USE_NAME, USE_DEPT_NAME, APPROVAL_ID, GRANT_BY
+	</sql>
+
+	<insert id="insert" parameterType="com.system.model.SysUserMenu" useGeneratedKeys="true" keyProperty="eid">
+		insert into SYS_USER_MENU (
+			MENU_ID, MENU_NAME, COMPANY_ID, KIND, USE_ID, 
+			USE_NAME, USE_DEPT_NAME, APPROVAL_ID, GRANT_BY, GRANT_TYPE
+		) values (
+			#{menuId}, #{menuName}, #{companyId}, #{kind}, #{useId}, 
+			#{useName}, #{useDeptName}, #{approvalId}, #{grantBy}, #{grantType}
+		)
+	</insert>
+	
+	<insert id="initInsert">
+		insert into SYS_USER_MENU (
+			MENU_ID, MENU_NAME, COMPANY_ID, KIND, USE_ID, 
+			USE_NAME, USE_DEPT_NAME, APPROVAL_ID, GRANT_BY, GRANT_TYPE
+		) values
+		<foreach collection="list" separator="," item="t" index="index">
+		(
+			#{t.menuId}, #{t.menuName}, #{t.companyId}, #{t.kind}, #{t.useId}, 
+			#{t.useName}, #{t.useDeptName}, #{t.approvalId}, #{t.grantBy}, #{t.grantType}
+		)
+		</foreach>
+	</insert>
+	
+	<select id="findMenuByLoginUser" resultType="java.util.Map">
+	select distinct a.* from (
+    	select t1.EID id, t1.PID pid, t1.MENU_NAME name, t1.MENU_CODE code,
+    	  t1.MENU_LEVEL level, t1.MENU_SHOW menuShow,
+    	 t1.SORT_INDEX sortIndex,t1.COMPANY_LEVEL companyLevel,
+    	 MENU_TYPE menuyType,
+    	case when t2.EID is null then 'no' 
+    		 else 'yes'
+    		 end isIn
+		from SYS_MENU t1 left join SYS_USER_MENU t2 
+		on t1.EID = t2.MENU_ID
+		and (
+			(t2.USE_ID = #{userId} and t2.KIND=3)
+			or
+			(t2.USE_ID = #{deptId} and t2.KIND=2)
+			or
+			(t2.USE_ID = #{companyId} and t2.KIND=1)
+		)
+	) a order by a.name
+	</select>
+	
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_USER_MENU
+		where EID = #{eid}
+	</select>
+
+	<update id="update" parameterType="com.system.model.SysUserMenu">
+		update SYS_USER_MENU
+		<set>
+			<if test="menuId != null">
+				MENU_ID = #{menuId},
+			</if>
+			<if test="menuName != null">
+				MENU_NAME = #{menuName},
+			</if>
+			<if test="companyId != null">
+				COMPANY_ID = #{companyId},
+			</if>
+			<if test="kind != null">
+				KIND = #{kind},
+			</if>
+			<if test="useId != null">
+				USE_ID = #{useId},
+			</if>
+			<if test="useName != null">
+				USE_NAME = #{useName},
+			</if>
+			<if test="useDeptName != null">
+				USE_DEPT_NAME = #{useDeptName},
+			</if>
+			<if test="approvalId != null">
+				APPROVAL_ID = #{approvalId},
+			</if>
+			<if test="grantBy != null">
+				GRANT_BY = #{grantBy},
+			</if>
+			<if test="grantType != null">
+				GRANT_TYPE = #{grantType},
+			</if>
+		</set>
+		where EID = #{eid}
+	</update>
+	
+	<update id="updateByUserId" parameterType="com.system.model.SysUserMenu">
+		update SYS_USER_MENU
+		<set>
+			<if test="useName != null">
+				USE_NAME = #{useName},
+			</if>
+		</set>
+		where USE_ID = #{useId}
+	</update>
+	
+	<update id="deleteAllRight">
+		delete from SYS_USER_MENU 
+		where COMPANY_ID = #{companyId} and MENU_ID = #{menuId}
+		<if test="grantBy != null">
+			and GRANT_BY = #{grantBy}
+		</if>
+		<if test="grantType != null">
+			and GRANT_TYPE = #{grantType}
+		</if>
+	</update>
+	
+	<update id="deleteAllApprovalRight">
+		delete from SYS_USER_MENU 
+		where COMPANY_ID = #{companyId} 
+		and MENU_ID = #{menuId}
+		and APPROVAL_ID = #{approvalId}
+		<if test="grantBy != null">
+			and GRANT_BY = #{grantBy}
+		</if>
+		<if test="grantType != null">
+			and GRANT_TYPE = #{grantType}
+		</if>
+	</update>
+	
+	<select id="existUserTemReportRight" resultType="int" parameterType="com.system.model.SysUserMenu">
+		SELECT count(1) from SYS_USER_MENU
+		where COMPANY_ID = #{companyId} 
+		and MENU_ID = #{menuId}
+		and USE_ID = #{useId}
+		and GRANT_BY = #{grantBy}
+		and KIND = #{kind}
+		and GRANT_TYPE = #{grantType}
+	</select>
+</mapper>

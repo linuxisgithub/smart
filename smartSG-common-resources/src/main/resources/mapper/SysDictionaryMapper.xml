@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysDictionaryDao">
+
+	<resultMap id="map" type="com.system.model.SysDictionary">
+		<id column="EID" property="eid" />
+		<result column="COMPANY_ID" property="companyId" />
+		<result column="NAME" property="name" />
+		<result column="CODE" property="code" />
+		<result column="VALUE" property="value" />
+		<result column="REMARK" property="remark" />
+		<result column="IS_ENABLE" property="isEnable" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="UPDATE_TIME" property="updateTime" />
+	</resultMap>
+	
+	<resultMap id="allMap" type="java.util.Map">
+		<id column="EID" property="eid" />
+		<result column="NAME" property="name" />
+		<result column="CODE" property="code" />
+		<result column="VALUE" property="value" />
+		<result column="REMARK" property="remark" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, COMPANY_ID, NAME, CODE, VALUE, REMARK,
+		IS_ENABLE,
+		DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') CREATE_TIME,
+		DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d %H:%I:%S') UPDATE_TIME
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="eid">
+		insert
+		into SYS_DICTIONARY (
+		COMPANY_ID, NAME, CODE, VALUE, REMARK,
+		IS_ENABLE,
+		CREATE_TIME, UPDATE_TIME
+		) values (
+		#{companyId}, #{name}, #{code},
+		#{value}, #{remark},
+		#{isEnable}, now(), now()
+		)
+	</insert>
+
+	<select id="findAllForMap" resultMap="allMap">
+		select
+		EID, NAME, CODE, VALUE, REMARK
+		from SYS_DICTIONARY
+		where COMPANY_ID = '-1'
+	</select>
+	
+	<select id="findDictionaryList" resultType="map">
+		select
+		EID eid, NAME name, VALUE value
+		from SYS_DICTIONARY
+		where COMPANY_ID = '-1' and CODE = #{code}
+	</select>
+	
+	<select id="findLogisticsList" resultType="java.util.Map">
+		SELECT
+		s.CODE code,
+		s.VALUE value,
+		s.NAME name,
+		s.COMPANY_ID userId,
+		s.REMARK remark,
+		IFNULL(t.OUT_CODE,"") outCode,
+		IFNULL(t.OUT_NAME,"") outName
+		FROM
+		SYS_DICTIONARY s
+		left join T_LOGISTICS_MAPPER t on s.VALUE=t.SELF_CODE and t.IS_USE=1
+		WHERE s.COMPANY_ID = '-5'
+	</select>
+</mapper>

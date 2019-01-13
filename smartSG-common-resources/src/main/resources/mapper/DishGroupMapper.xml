@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="DishGroupDao">
+	<resultMap id="BaseResultMap" type="com.sg.model.DishGroup">
+		<id column="EID" property="eid" />
+		<result column="DEPT_ID" property="deptId" />
+		<result column="NAME" property="name" />
+		<result column="IS_DEL" property="isDel" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="UPDATE_TIME" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, DEPT_ID, `NAME`, IS_DEL, DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') CREATE_TIME, DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d %H:%i:%s') UPDATE_TIME
+
+	</sql>
+
+	<insert id="insert" parameterType="com.sg.model.DishGroup" useGeneratedKeys="true" keyProperty="eid">
+		insert into T_DISH_GROUP (
+			DEPT_ID, `NAME`, IS_DEL, CREATE_TIME
+
+		) values (
+			#{deptId}, #{name}, #{isDel}, now()
+
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_DISH_GROUP
+		where EID = #{eid}
+	</select>
+
+	<select id="findByBid" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_DISH_GROUP
+		where DEPT_ID = #{bid} and IFNULL(IS_DEL,0) != 1
+	</select>
+
+	<update id="update" parameterType="com.sg.model.DishGroup">
+		update T_DISH_GROUP
+		<set>
+			<if test="deptId != null">
+				DEPT_ID = #{deptId},
+			</if>
+			<if test="name != null">
+				`NAME` = #{name},
+			</if>
+			<if test="isDel != null">
+				IS_DEL = #{isDel},
+			</if>
+				UPDATE_TIME = now()
+		</set>
+		where EID = #{eid}
+	</update>
+
+	<select id="checkName" resultType="long">
+		select
+		count(0)
+		from T_DISH_GROUP
+		where IFNULL(IS_DEL,0) != 1
+		and DEPT_ID = #{bid}
+		and `NAME` = #{name}
+	</select>
+
+</mapper>

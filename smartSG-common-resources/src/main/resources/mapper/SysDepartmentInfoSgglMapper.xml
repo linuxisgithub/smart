@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysDepartmentInfoSgglDao">
+	<resultMap id="BaseResultMap" type="com.system.model.SysDepartmentInfoSggl">
+		<id column="EID" property="eid" />
+		<result column="DEPT_ID" property="deptId" />
+		<result column="DEPT_NAME" property="deptName" />
+		<result column="COMPANY_ID" property="companyId" />
+		<result column="MY_ID" property="myId" />
+		<result column="ADDRESS" property="address" />
+		<result column="ZIP_CODE" property="zipCode" />
+		<result column="BANK_CARD_HAVE_PEOPLE" property="bankCardHavePeople" />
+		<result column="BANK_CARD_ACCOUNT" property="bankCardAccount" />
+		<result column="BANK" property="bank" />
+		<result column="MAX_NUM" property="maxNum" />
+		<result column="ACTIVATION_NUM" property="activationNum" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="UPDATE_TIME" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, DEPT_ID, DEPT_NAME, COMPANY_ID, MY_ID, ADDRESS, 
+		ZIP_CODE, BANK_CARD_HAVE_PEOPLE, BANK_CARD_ACCOUNT, BANK, MAX_NUM, ACTIVATION_NUM, 
+		DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') CREATE_TIME, DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d %H:%i:%s') UPDATE_TIME
+	</sql>
+
+	<insert id="insert" parameterType="com.system.model.SysDepartmentInfoSggl" useGeneratedKeys="true" keyProperty="eid">
+		insert into SYS_DEPARTMENT_INFO_SGGL (
+			DEPT_ID, DEPT_NAME, COMPANY_ID, MY_ID, ADDRESS, 
+			ZIP_CODE, BANK_CARD_HAVE_PEOPLE, BANK_CARD_ACCOUNT, BANK, MAX_NUM, ACTIVATION_NUM, 
+			CREATE_TIME
+		) values (
+			#{deptId}, #{deptName}, #{companyId}, #{myId}, #{address}, 
+			#{zipCode}, #{bankCardHavePeople}, #{bankCardAccount}, #{bank}, #{maxNum}, #{activationNum}, 
+			now()
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_DEPARTMENT_INFO_SGGL
+		where EID = #{eid}
+	</select>
+
+	<select id="findByBid" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_DEPARTMENT_INFO_SGGL
+		where DEPT_ID = #{bid}
+	</select>
+
+	<update id="update" parameterType="com.system.model.SysDepartmentInfoSggl">
+		update SYS_DEPARTMENT_INFO_SGGL
+		<set>
+			<if test="deptId != null">
+				DEPT_ID = #{deptId},
+			</if>
+			<if test="deptName != null">
+				DEPT_NAME = #{deptName},
+			</if>
+			<if test="companyId != null">
+				COMPANY_ID = #{companyId},
+			</if>
+			<if test="myId != null">
+				MY_ID = #{myId},
+			</if>
+			<if test="address != null">
+				ADDRESS = #{address},
+			</if>
+			<if test="zipCode != null">
+				ZIP_CODE = #{zipCode},
+			</if>
+			<if test="bankCardHavePeople != null">
+				BANK_CARD_HAVE_PEOPLE = #{bankCardHavePeople},
+			</if>
+			<if test="bankCardAccount != null">
+				BANK_CARD_ACCOUNT = #{bankCardAccount},
+			</if>
+			<if test="bank != null">
+				BANK = #{bank},
+			</if>
+			<if test="maxNum != null">
+				MAX_NUM = #{maxNum},
+			</if>
+			<if test="activationNum != null">
+				ACTIVATION_NUM = #{activationNum},
+			</if>
+			UPDATE_TIME = now()
+		</set>
+		where EID = #{eid}
+	</update>
+
+</mapper>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="DishInfoDao">
+	<resultMap id="BaseResultMap" type="com.sg.model.DishInfo">
+		<id column="EID" property="eid" />
+		<result column="DEPT_ID" property="deptId" />
+		<result column="SER_NO" property="serNo" />
+		<result column="NAME" property="name" />
+		<result column="EN_NAME" property="enName" />
+		<result column="GROUP_ID" property="groupId" />
+		<result column="GROUP_NAME" property="groupName" />
+		<result column="UNIT" property="unit" />
+		<result column="SELLING_PRICE" property="sellingPrice" />
+		<result column="CALORIE" property="calorie" />
+		<result column="PREPARATION_TIME" property="preparationTime" />
+		<result column="COST" property="cost" />
+		<result column="NUMBER" property="number" />
+		<result column="DESCRIPTION" property="description" />
+		<result column="EN_DESCRIPTION" property="enDescription" />
+		<result column="IS_DEL" property="isDel" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="UPDATE_TIME" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, DEPT_ID, SER_NO, NAME, EN_NAME, GROUP_ID, 
+		GROUP_NAME, UNIT, SELLING_PRICE, CALORIE, PREPARATION_TIME, COST, 
+		NUMBER, DESCRIPTION, EN_DESCRIPTION, IS_DEL, DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') CREATE_TIME, DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d %H:%i:%s') UPDATE_TIME
+
+	</sql>
+
+	<insert id="insert" parameterType="com.sg.model.DishInfo" useGeneratedKeys="true" keyProperty="eid">
+		insert into T_DISH_INFO (
+			DEPT_ID, SER_NO, NAME, EN_NAME, GROUP_ID, 
+			GROUP_NAME, UNIT, SELLING_PRICE, CALORIE, PREPARATION_TIME, COST, 
+			NUMBER, DESCRIPTION, EN_DESCRIPTION, IS_DEL, CREATE_TIME
+
+		) values (
+			#{deptId}, #{serNo}, #{name}, #{enName}, #{groupId}, 
+			#{groupName}, #{unit}, #{sellingPrice}, #{calorie}, #{preparationTime}, #{cost}, 
+			#{number}, #{description}, #{enDescription}, #{isDel}, now()
+
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_DISH_INFO
+		where EID = #{eid}
+	</select>
+
+	<select id="findByBid" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_DISH_INFO
+		where DEPT_ID = #{bid} and IFNULL(IS_DEL,0) != 1
+	</select>
+	<update id="update" parameterType="com.sg.model.DishInfo">
+		update T_DISH_INFO
+		<set>
+			<if test="deptId != null">
+				DEPT_ID = #{deptId},
+			</if>
+			<if test="serNo != null">
+				SER_NO = #{serNo},
+			</if>
+			<if test="name != null">
+				NAME = #{name},
+			</if>
+			<if test="enName != null">
+				EN_NAME = #{enName},
+			</if>
+			<if test="groupId != null">
+				GROUP_ID = #{groupId},
+			</if>
+			<if test="groupName != null">
+				GROUP_NAME = #{groupName},
+			</if>
+			<if test="unit != null">
+				UNIT = #{unit},
+			</if>
+			<if test="sellingPrice != null">
+				SELLING_PRICE = #{sellingPrice},
+			</if>
+			<if test="calorie != null">
+				CALORIE = #{calorie},
+			</if>
+			<if test="preparationTime != null">
+				PREPARATION_TIME = #{preparationTime},
+			</if>
+			<if test="cost != null">
+				COST = #{cost},
+			</if>
+			<if test="number != null">
+				NUMBER = #{number},
+			</if>
+			<if test="description != null">
+				DESCRIPTION = #{description},
+			</if>
+			<if test="enDescription != null">
+				EN_DESCRIPTION = #{enDescription},
+			</if>
+			<if test="isDel != null">
+				IS_DEL = #{isDel},
+			</if>
+				UPDATE_TIME = now()
+		</set>
+		where EID = #{eid}
+	</update>
+
+	<select id="findPagedCount" resultType="long">
+		select
+		count(0)
+		from T_DISH_INFO
+		where DEPT_ID = #{criteria.l_deptId}
+			and IFNULL(IS_DEL,0) != 1
+	</select>
+
+	<select id="findPagedList" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_DISH_INFO
+		where  IFNULL(IS_DEL,0) != 1 and DEPT_ID = #{criteria.l_deptId}
+		<![CDATA[order by CREATE_TIME desc]]>
+	</select>
+
+</mapper>

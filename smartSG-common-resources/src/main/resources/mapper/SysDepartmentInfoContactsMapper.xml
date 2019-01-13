@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysDepartmentInfoContactsDao">
+	<resultMap id="BaseResultMap" type="com.system.model.SysDepartmentInfoContacts">
+		<id column="EID" property="eid" />
+		<result column="DEPT_ID" property="deptId" />
+		<result column="DEPT_NAME" property="deptName" />
+		<result column="COMPANY_ID" property="companyId" />
+		<result column="NAME" property="name" />
+		<result column="JOB" property="job" />
+		<result column="PHONE" property="phone" />
+		<result column="TELEPHONE" property="telephone" />
+		<result column="EMAIL" property="email" />
+		<result column="ID_CARD" property="idCard" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="UPDATE_TIME" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, DEPT_ID, DEPT_NAME, COMPANY_ID, NAME, JOB, 
+		PHONE, TELEPHONE, EMAIL, ID_CARD, DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') CREATE_TIME, DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d %H:%i:%s') UPDATE_TIME
+
+	</sql>
+
+	<insert id="insert" parameterType="com.system.model.SysDepartmentInfoContacts" useGeneratedKeys="true" keyProperty="eid">
+		insert into SYS_DEPARTMENT_INFO_CONTACTS (
+			DEPT_ID, DEPT_NAME, COMPANY_ID, NAME, JOB, 
+			PHONE, TELEPHONE, EMAIL, ID_CARD, CREATE_TIME
+
+		) values (
+			#{deptId}, #{deptName}, #{companyId}, #{name}, #{job}, 
+			#{phone}, #{telephone}, #{email}, #{idCard}, now()
+
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_DEPARTMENT_INFO_CONTACTS
+		where EID = #{eid}
+	</select>
+
+	<select id="findByBid" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_DEPARTMENT_INFO_CONTACTS
+		where DEPT_ID = #{bid}
+	</select>
+
+	<update id="update" parameterType="com.system.model.SysDepartmentInfoContacts">
+		update SYS_DEPARTMENT_INFO_CONTACTS
+		<set>
+			<if test="deptId != null">
+				DEPT_ID = #{deptId},
+			</if>
+			<if test="deptName != null">
+				DEPT_NAME = #{deptName},
+			</if>
+			<if test="companyId != null">
+				COMPANY_ID = #{companyId},
+			</if>
+			<if test="name != null">
+				NAME = #{name},
+			</if>
+			<if test="job != null">
+				JOB = #{job},
+			</if>
+			<if test="phone != null">
+				PHONE = #{phone},
+			</if>
+			<if test="telephone != null">
+				TELEPHONE = #{telephone},
+			</if>
+			<if test="email != null">
+				EMAIL = #{email},
+			</if>
+			<if test="idCard != null">
+				ID_CARD = #{idCard},
+			</if>
+			UPDATE_TIME = now(),
+		</set>
+		where EID = #{eid}
+	</update>
+
+</mapper>

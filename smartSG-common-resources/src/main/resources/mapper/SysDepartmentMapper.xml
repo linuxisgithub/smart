@@ -1,0 +1,761 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysDepartmentDao">
+	<resultMap id="BaseResultMap" type="com.system.model.SysDepartment">
+		<id column="EID" property="eid" />
+		<result column="PID" property="pid" />
+		<result column="PNAME" property="pname" />
+		<result column="COMPANY_ID" property="companyId" />
+		<result column="NAME" property="name" />
+		<result column="CODE" property="code" />
+		<result column="STAFF_NUM" property="staffNum" />
+		<result column="TYPE" property="type" />
+		<result column="DTYPE" property="dtype" />
+		<result column="NAME_CH" property="nameCh" />
+		<result column="MAIN_JOB" property="mainJob" />
+		<result column="LESS_JOB" property="lessJob" />
+		<result column="ASSIST_JOB" property="assistJob" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="UPDATE_TIME" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, PID, PNAME, COMPANY_ID, NAME, CODE, STAFF_NUM, NAME_CH,
+		TYPE, DTYPE, MAIN_JOB, LESS_JOB, ASSIST_JOB, DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') CREATE_TIME,
+		DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d %H:%I:%S') UPDATE_TIME
+	</sql>
+
+	<insert id="insert" parameterType="com.system.model.SysDepartment" useGeneratedKeys="true" keyProperty="eid">
+		insert into SYS_DEPARTMENT (
+			PID, PNAME, COMPANY_ID, NAME, CODE, STAFF_NUM, 
+			TYPE, DTYPE, MAIN_JOB, LESS_JOB, ASSIST_JOB, CREATE_TIME,
+			UPDATE_TIME, NAME_CH
+		) values (
+			#{pid}, #{pname}, #{companyId}, #{name}, #{code}, #{staffNum}, 
+			#{type}, #{dtype}, #{mainJob}, #{lessJob}, #{assistJob}, now(),
+			now(), #{nameCh}
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_DEPARTMENT
+		where EID = #{eid}
+	</select>
+	<update id="updatePname">
+		update SYS_DEPARTMENT set PNAME = #{newName}
+		where PID = #{pid} and COMPANY_ID = #{conpanyId};
+		update SYS_USER set DEPT_NAME = #{newName}
+		where DEPT_ID = #{pid} and COMPANY_ID = #{conpanyId};
+	</update>
+	<update id="update" parameterType="com.system.model.SysDepartment">
+		update SYS_DEPARTMENT
+		<set>
+			<if test="pid != null">
+				PID = #{pid},
+			</if>
+			<if test="pname != null">
+				PNAME = #{pname},
+			</if>
+			<if test="code != null">
+				CODE = #{code},
+			</if>
+			<if test="companyId != null">
+				COMPANY_ID = #{companyId},
+			</if>
+			<if test="name != null">
+				NAME = #{name},
+			</if>
+			<if test="staffNum != null">
+				STAFF_NUM = #{staffNum},
+			</if>
+			<if test="type != null">
+				TYPE = #{type},
+			</if>
+			<if test="dtype != null">
+				DTYPE = #{dtype},
+			</if>
+			<if test="nameCh != null">
+				NAME_CH = #{nameCh},
+			</if>
+			<if test="mainJob != null">
+				MAIN_JOB = #{mainJob},
+			</if>
+			<if test="lessJob != null">
+				LESS_JOB = #{lessJob},
+			</if>
+			<if test="assistJob != null">
+				ASSIST_JOB = #{assistJob},
+			</if>
+			UPDATE_TIME = now(),
+		</set>
+		where EID = #{eid}
+	</update>
+	
+	<select id="findPageRlzyCount" resultType="long">
+		select count(1) from 
+		SYS_DEPARTMENT t1 where COMPANY_ID = #{criteria.l_companyId}
+		<choose>
+			<when test="criteria.l_pid == -1">
+				and TYPE = 1
+			</when>
+			<when test="criteria.l_pid != null">
+				and PID = #{criteria.l_pid}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		<if test="criteria.s_deptName != null">
+			and t1.`NAME` like concat('%',#{criteria.s_deptName},'%')
+		</if>
+	</select>
+	
+	<select id="findPageRlzyList" resultType="java.util.Map">
+		
+		SELECT EID eid, NAME name, PNAME pname, STAFF_NUM staffNum, num, STAFF_NUM-num diff FROM (
+			SELECT t1.EID,t1.`NAME`,t1.PNAME,t1.STAFF_NUM,
+			(
+				SELECT COUNT(1) FROM SYS_USER WHERE JOB_STATUS != 4 
+				AND COMPANY_ID=#{criteria.l_companyId} 
+				and DEPT_CODE like CONCAT(subDeptCode(t1.CODE),'%')
+				<!-- and DEPT_ID = t1.EID -->
+			) num
+ 			FROM SYS_DEPARTMENT t1 WHERE COMPANY_ID = #{criteria.l_companyId}
+			<choose>
+				<when test="criteria.l_pid == -1">
+					and TYPE = 1
+				</when>
+				<when test="criteria.l_pid != null">
+					and PID = #{criteria.l_pid}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+ 		) a where 1=1
+		<if test="criteria.s_deptName != null">
+			and name like concat('%',#{criteria.s_deptName},'%')
+		</if>
+	</select>
+	
+	<select id="findPageRlzyTotal" resultType="java.util.Map">
+		SELECT total, total_staffNum, total_num, (total_staffNum-total_num) diff FROM(
+		SELECT '合计' total, SUM(STAFF_NUM) total_staffNum,
+		(
+			SELECT SUM(num) FROM (
+				SELECT	(
+					SELECT COUNT(1) FROM SYS_USER WHERE JOB_STATUS != 4 
+					AND COMPANY_ID=#{l_companyId}
+					and DEPT_CODE like CONCAT(subDeptCode(t1.CODE),'%')
+					<!-- and DEPT_ID = t1.EID -->
+				) num
+				FROM SYS_DEPARTMENT t1 WHERE  COMPANY_ID = #{l_companyId}
+				<choose>
+				<when test="l_pid == -1">
+					and TYPE = 1
+				</when>
+				<when test="l_pid != null">
+					and PID = #{l_pid}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			) a
+		) total_num
+		FROM SYS_DEPARTMENT t1 where t1.COMPANY_ID = #{l_companyId}
+		<choose>
+			<when test="l_pid == -1">
+				and t1.TYPE = 1
+			</when>
+			<when test="l_pid != null">
+				and PID = #{l_pid}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		)d
+
+	</select>
+	
+	<select id="findByTypeCount" resultType="long">
+		select count(1) from SYS_DEPARTMENT 
+		where COMPANY_ID = #{criteria.l_companyId}
+		and TYPE = #{criteria.i_type}
+	</select>
+	
+	<select id="findByTypeList" resultType="java.util.Map">
+		select EID eid, PID pid, PNAME pname, NAME name, CODE code,IFNULL(NAME_CH, '') nameCh,DTYPE dtype,
+		case MAIN_JOB
+			when 1 then '总裁' when 2 then '总经理'
+			when 3 then '总监' when 4 then '老板'
+			when 5 then '部长' when 6 then '主任'
+			when 7 then '管理员' when 0 then '董事长'
+			when 8 then '组长'
+			else '其他'
+		end mainJob,
+		case LESS_JOB
+			when 1 then '副总裁' when 2 then '副总经理'
+			when 3 then '副总监' when 4 then '副经理'
+			when 5 then '副部长' when 6 then '副主任'
+			when 7 then '副管理员' when 0 then '副董事长'
+			when 8 then '副组长'
+			else '其他'
+		end lessJob
+		from SYS_DEPARTMENT 
+		where COMPANY_ID = #{criteria.l_companyId}
+		<choose>
+			<when test="criteria.i_type == 1">
+				and (TYPE = 1 or TYPE = 0)
+			</when>
+			<otherwise>
+				and TYPE = #{criteria.i_type}
+			</otherwise>
+		</choose>
+		
+		<choose>
+			<when test="criteria.s_orderBy == 'pname_asc'">
+				order by PID asc
+			</when>
+			<when test="criteria.s_orderBy == 'pname_desc'">
+				order by PID desc
+			</when>
+		</choose>
+	</select>
+	
+	<select id="findDeptsByType" resultType="java.util.Map">
+		select EID eid, NAME name,
+		PID pid, PNAME pname, CODE code, TYPE type,DTYPE dtype,
+		case MAIN_JOB
+			when 1 then '总裁' when 2 then '总经理'
+			when 3 then '总监' when 4 then '部长'
+			when 5 then '经理' when 6 then '主任'
+			when 7 then '主管' when 0 then '董事长'
+			when 8 then '党组书记' when 9 then '主任'
+			when 10 then '科长' when 11 then '村（居）委主任'
+			else '其他'
+		end mainJob
+		from SYS_DEPARTMENT 
+		where COMPANY_ID = #{companyId}
+		<if test="type != -1">
+			<if test="type == -2">
+				and (TYPE =  0 or TYPE =  1)
+			</if>
+			<if test="type != -2">
+				and TYPE =  #{type}
+			</if>
+		</if>
+		<if test="dtype != -1">
+			and DTYPE =  #{dtype}
+		</if>
+	</select>
+	
+	<select id="findDeptsByConpanyId" resultType="java.util.Map">
+		select EID eid, NAME name,
+		PID pid, PNAME pname, CODE code
+		from SYS_DEPARTMENT 
+		where COMPANY_ID = #{conpanyId}
+	</select>
+	
+	<select id="findUserByDeptEid" resultType="java.util.Map">
+		select
+		EID userId,
+		NAME userName	
+		from
+		SYS_USER
+		where
+		DEPT_ID = #{eid}
+	</select>
+	
+	<select id="findTreeDeptsByPidAndType" resultType="java.util.Map">
+		select EID eid, NAME name, PID pid, PNAME pname, CODE code
+		from SYS_DEPARTMENT 
+		where COMPANY_ID = #{conpanyId}
+		and 
+		(
+		(PID = #{pid} and TYPE = #{type})
+		or 
+		(PID = #{pid} and TYPE = 4)
+		)
+	</select>
+	
+	
+	<select id="isExistDeptName" resultType="long">
+		select count(1) from SYS_DEPARTMENT
+		where COMPANY_ID = #{conpanyId} and NAME = #{deptName}
+		<if test="eid != null">
+			and EID != #{eid}
+		</if>
+	</select>
+	
+	<select id="getDeptLevelNum" resultType="java.util.Map">
+		select sum(case TYPE when 1 then 1 else 0 end) comNum,
+		sum(case TYPE when 2 then 1 else 0 end) firstNum,
+		sum(case TYPE when 3 then 1 else 0 end) secNum,
+		sum(case TYPE when 4 then 1 else 0 end) outNum
+		from SYS_DEPARTMENT where COMPANY_ID = #{conpanyId}
+	</select>
+	
+	<select id="getTreeLevelNum" resultType="java.util.Map">
+		select PID pid, TYPE type, count(1) num from SYS_DEPARTMENT where COMPANY_ID = #{conpanyId}
+		group by TYPE, PID order by TYPE;
+	</select>
+	
+	<select id="findDepts" resultType="java.util.Map">
+		
+		SELECT EID eid,PID pid, NAME name, STAFF_NUM staffNum, num, STAFF_NUM-num diff FROM (
+			SELECT t1.EID,t1.`NAME`,t1.STAFF_NUM,t1.PID,
+			(
+				
+				SELECT COUNT(1) FROM SYS_USER WHERE JOB_STATUS != 4 
+				AND COMPANY_ID=#{companyId} 
+				and DEPT_CODE like CONCAT(subDeptCode(t1.CODE),'%')
+			) num
+ 			FROM SYS_DEPARTMENT t1 WHERE COMPANY_ID = #{companyId}
+ 			<choose>
+				<when test="l_pid == -1">
+					and t1.TYPE = 1
+				</when>
+				<otherwise>
+					and t1.PID = #{l_pid}
+				</otherwise>
+			</choose>
+ 		) a
+	</select>
+	
+	<insert id="updateStaffNum">
+		INSERT INTO
+		SYS_DEPARTMENT
+		(
+		EID,
+		PID,
+		STAFF_NUM
+		) VALUES
+		<foreach collection="staffNumList" item="map" separator=",">
+			(
+			#{map.eid},#{map.pid},#{map.staffNum}
+			)
+		</foreach>
+		ON DUPLICATE KEY UPDATE STAFF_NUM=VALUES(STAFF_NUM)
+	</insert>
+	
+	<select id="findCountByPid" resultType="int">
+		select count(1) from SYS_DEPARTMENT where PID = #{pid}
+	</select>
+	
+	<select id="findLastChildByPid" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_DEPARTMENT
+		where PID = #{pid} order by `CODE` desc limit 0,1;
+	</select>
+	
+	<select id="findChildsBySubCode" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_DEPARTMENT
+		where CODE like CONCAT(#{subCode},'%') and COMPANY_ID = #{companyId}
+		<if test="code != null">
+			and CODE != #{code}
+		</if>
+	</select>
+	
+	
+	<select id="findListDeptsByTypeCount" resultType="long">
+	select count(0)
+	from (select EID eid, NAME name,
+		PID pid, PNAME pname, CODE code, TYPE type,
+		case MAIN_JOB
+			when 1 then '总裁' when 2 then '总经理'
+			when 3 then '总监' when 4 then '部长'
+			when 5 then '经理' when 6 then '主任'
+			when 7 then '主管' when 0 then '董事长'
+			when 8 then '党组书记' when 9 then '主任'
+			when 10 then '科长' when 11 then '村（居）委主任'
+			else '其他'
+		end mainJob
+		from SYS_DEPARTMENT 
+		where COMPANY_ID = #{criteria.l_companyId}
+		<choose>
+			<!-- <when test="type != -1 && type == 1">
+				and (TYPE = 1 or TYPE = 0)
+			</when> -->
+			<when test="criteria.l_type == -2">
+				and TYPE != 4 and TYPE <![CDATA[>=]]> 1 and TYPE != 5
+			</when>
+			<when test="criteria.l_type == -1">
+				and TYPE <![CDATA[>=]]> 1 and TYPE <![CDATA[<=]]> 4
+			</when>
+			<otherwise>
+				and TYPE = #{criteria.type}
+			</otherwise>
+		</choose>) a
+	</select>
+	<select id="findListDeptsByTypeList" resultType="java.util.Map">
+		select EID eid, NAME name,
+		PID pid, PNAME pname, CODE code, TYPE type,
+		case MAIN_JOB
+			when 1 then '总裁' when 2 then '总经理'
+			when 3 then '总监' when 4 then '部长'
+			when 5 then '经理' when 6 then '主任'
+			when 7 then '主管' when 0 then '董事长'
+			when 8 then '党组书记' when 9 then '主任'
+			when 10 then '科长' when 11 then '村（居）委主任'
+			else '其他'
+		end mainJob
+		from SYS_DEPARTMENT 
+		where COMPANY_ID = #{criteria.l_companyId}
+		<choose>
+			<!-- <when test="type != -1 && type == 1">
+				and (TYPE = 1 or TYPE = 0)
+			</when> -->
+			<when test="criteria.l_type == -2">
+				and TYPE != 4 and TYPE <![CDATA[>=]]> 1 and TYPE != 5
+			</when>
+			<when test="criteria.l_type == -1">
+				and TYPE <![CDATA[>=]]> 1 and TYPE != 5
+			</when>
+			<otherwise>
+				and TYPE = #{criteria.type}
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findTeamCount" resultType="long">
+		select
+		count(0)
+		from SYS_DEPARTMENT
+		where COMPANY_ID = #{criteria.l_companyId} and TYPE = 5
+		<if test="criteria.s_year != null and criteria.s_year != ''">
+			and CREATE_TIME like concat('%',#{criteria.s_year},'%')
+		</if>
+		<if test="criteria.s_mechanism != null and criteria.s_mechanism != ''">
+			and (NAME like concat('%',#{criteria.s_mechanism},'%') 
+			     or NAME_CH like concat('%',#{criteria.s_mechanism},'%'))
+		</if>
+		<if test="criteria.s_deptId != null and criteria.s_deptId != -1 and criteria.s_deptId != ''">
+			and PID = #{criteria.s_deptId}
+		</if>
+	</select>
+	
+	<select id="findTeamList" resultType="java.util.Map">
+		select
+		EID eid, PNAME deptName, NAME_CH mechanismOne, NAME mechanismTwo, STAFF_NUM staffNum
+		from SYS_DEPARTMENT
+		where COMPANY_ID = #{criteria.l_companyId} and TYPE = 5
+		<if test="criteria.s_year != null and criteria.s_year != ''">
+			and CREATE_TIME like concat('%',#{criteria.s_year},'%')
+		</if>
+		<if test="criteria.s_mechanism != null and criteria.s_mechanism != ''">
+			and (NAME like concat('%',#{criteria.s_mechanism},'%') 
+			     or NAME_CH like concat('%',#{criteria.s_mechanism},'%'))
+		</if>
+		<if test="criteria.s_deptId != null and criteria.s_deptId != -1 and criteria.s_deptId != ''">
+			and PID = #{criteria.s_deptId}
+		</if>
+		<![CDATA[order by CREATE_TIME desc]]>
+	</select>
+	
+	<select id="sumTeamStaff" resultType="integer">
+		select
+		sum(STAFF_NUM)
+		from SYS_DEPARTMENT
+		where COMPANY_ID = #{l_companyId} and TYPE = 5
+		<if test="s_year != null and s_year != ''">
+			and CREATE_TIME like concat('%',#{s_year},'%')
+		</if>
+		<if test="s_mechanism != null and s_mechanism != ''">
+			and (NAME like concat('%',#{s_mechanism},'%') 
+			     or NAME_CH like concat('%',#{s_mechanism},'%'))
+		</if>
+		<if test="s_deptId != null and s_deptId != -1 and s_deptId != ''">
+			and PID = #{criteria.s_deptId}
+		</if>
+	</select>
+	
+		
+	<select id="findTeamSummaryCount" resultType="long">
+		select count(1) from 
+		SYS_DEPARTMENT where COMPANY_ID = #{criteria.l_companyId} and TYPE = 5
+		<if test="criteria.s_mechanism != null and criteria.s_mechanism != ''">
+			and (NAME like concat('%',#{criteria.s_mechanism},'%') 
+			     or NAME_CH like concat('%',#{criteria.s_mechanism},'%'))
+		</if>
+		<if test="criteria.s_deptId != null and criteria.s_deptId != -1 and criteria.s_deptId != ''">
+			and PID = #{criteria.s_deptId}
+		</if>
+		<if test="criteria.s_inType == 1">
+			and CREATE_TIME like concat('%',#{criteria.s_month},'%')
+		</if>
+	</select>
+	
+	<select id="findTeamSummaryList" resultType="java.util.Map">
+		
+		SELECT EID eid, NAME mechanismTwo, PNAME deptName, STAFF_NUM staffNum, num, STAFF_NUM-num diff, NAME_CH mechanismOne  FROM (
+			SELECT t1.EID,t1.`NAME`,t1.PNAME,t1.STAFF_NUM,t1.NAME_CH,
+			(
+				SELECT COUNT(1) FROM SYS_USER WHERE JOB_STATUS != 4 
+				AND COMPANY_ID=#{criteria.l_companyId} 
+				<!-- and DEPT_CODE like CONCAT(subDeptCode(t1.CODE),'%') -->
+				and DEPT_ID = t1.EID
+			) num
+ 			FROM SYS_DEPARTMENT t1 WHERE COMPANY_ID = #{criteria.l_companyId} and TYPE = 5
+			<if test="criteria.s_mechanism != null and criteria.s_mechanism != ''">
+				and (NAME like concat('%',#{criteria.s_mechanism},'%') 
+				     or NAME_CH like concat('%',#{criteria.s_mechanism},'%'))
+			</if>
+			<if test="criteria.s_deptId != null and criteria.s_deptId != -1 and criteria.s_deptId != ''">
+				and PID = #{criteria.s_deptId}
+			</if>
+			<if test="criteria.s_inType == 1">
+				and CREATE_TIME like concat('%',#{criteria.s_month},'%')
+			</if>
+ 		) a where 1=1
+	</select>
+	
+	<select id="findTeamSummaryTotal" resultType="java.util.Map">
+		SELECT total, total_staffNum, total_num, (total_staffNum-total_num) diff FROM(
+		SELECT '合计' total, SUM(STAFF_NUM) total_staffNum,
+		(
+			SELECT SUM(num) FROM (
+				SELECT	(
+					SELECT COUNT(1) FROM SYS_USER WHERE JOB_STATUS != 4 
+					AND COMPANY_ID=#{l_companyId}
+					<!-- and DEPT_CODE like CONCAT(subDeptCode(t1.CODE),'%') -->
+					and DEPT_ID = t1.EID
+				) num
+				FROM SYS_DEPARTMENT t1 WHERE  COMPANY_ID = #{l_companyId} and TYPE = 5
+				<if test="s_mechanism != null and s_mechanism != ''">
+				and (NAME like concat('%',#{s_mechanism},'%') 
+				     or NAME_CH like concat('%',#{s_mechanism},'%'))
+				</if>
+				<if test="s_deptId != null and s_deptId != -1 and s_deptId != ''">
+					and PID = #{s_deptId}
+				</if>
+				<if test="s_inType == 1">
+					and CREATE_TIME like concat('%',#{s_month},'%')
+				</if>
+			) a
+		) total_num
+		FROM SYS_DEPARTMENT t1 where t1.COMPANY_ID = #{l_companyId}  and t1.TYPE = 5
+		        <if test="s_mechanism != null and s_mechanism != ''">
+				and (t1.NAME like concat('%',#{s_mechanism},'%') 
+				     or t1.NAME_CH like concat('%',#{s_mechanism},'%'))
+				</if>
+				<if test="s_deptId != null and s_deptId != -1 and s_deptId != ''">
+					and t1.PID = #{s_deptId}
+				</if>
+				<if test="s_inType == 1">
+					and t1.CREATE_TIME like concat('%',#{s_month},'%')
+				</if>
+		)d
+
+	</select>
+	
+	<select id="findTeamStaffSizeData" resultType="com.alibaba.fastjson.JSONObject">
+		SELECT
+			COUNT(u.EID) workNum,
+			SUM(d.STAFF_NUM) staffNum
+		FROM
+			SYS_DEPARTMENT d LEFT JOIN SYS_USER u on u.DEPT_ID = d.EID and u.JOB_STATUS != 4 
+		WHERE
+			d.COMPANY_ID = #{l_companyId}
+		AND d.TYPE = 5
+		<choose>
+			<when test="s_business == 'monthly' ">AND DATE_FORMAT(d.CREATE_TIME, '%Y-%m') = #{s_date}</when>
+			<when test="s_business == 'quarter' ">
+				AND DATE_FORMAT(d.CREATE_TIME, '%Y-%m') in (
+					<choose>
+						<when test="s_month == '01' or s_month == '02' or s_month == '03' ">
+								concat(#{s_year},'-','01'),
+								concat(#{s_year},'-','02'),
+								concat(#{s_year},'-','03')  
+						</when>
+						<when test="s_month == '04' or s_month == '05' or s_month == '06' ">
+								concat(#{s_year},'-','04'),
+								concat(#{s_year},'-','05'),
+								concat(#{s_year},'-','06')  
+						</when>
+						<when test="s_month == '07' or s_month == '08' or s_month == '09' ">
+								concat(#{s_year},'-','07'),
+								concat(#{s_year},'-','08'),
+								concat(#{s_year},'-','09')  
+						</when>
+						<when test="s_month == '10' or s_month == '11' or s_month == '12' ">
+								concat(#{s_year},'-','10'),
+								concat(#{s_year},'-','11'),
+								concat(#{s_year},'-','12')  
+						</when>
+					</choose>
+					)
+			</when>
+			<otherwise>AND DATE_FORMAT(d.CREATE_TIME, '%Y') = #{s_year}</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findTeamIncomeData" resultType="com.alibaba.fastjson.JSONObject">
+		SELECT IFNULL(SUM(e.TOTAL),0) / 10000 income from T_EMP_INCOME e where e.USER_ID in (
+			SELECT u.EID FROM SYS_USER u 
+			WHERE u.DEPT_ID IN (
+				SELECT
+					d.EID
+				FROM
+					SYS_DEPARTMENT d
+				WHERE
+					d.COMPANY_ID = #{l_companyId}
+				AND d.TYPE = 5
+				<choose>
+					<when test="s_business == 'monthly' ">AND DATE_FORMAT(d.CREATE_TIME, '%Y-%m') = #{s_date}</when>
+					<when test="s_business == 'quarter' ">
+						AND DATE_FORMAT(d.CREATE_TIME, '%Y-%m') in (
+						<choose>
+							<when test="s_month == '01' or s_month == '02' or s_month == '03' ">
+									concat(#{s_year},'-','01'),
+									concat(#{s_year},'-','02'),
+									concat(#{s_year},'-','03')  
+							</when>
+							<when test="s_month == '04' or s_month == '05' or s_month == '06' ">
+									concat(#{s_year},'-','04'),
+									concat(#{s_year},'-','05'),
+									concat(#{s_year},'-','06')  
+							</when>
+							<when test="s_month == '07' or s_month == '08' or s_month == '09' ">
+									concat(#{s_year},'-','07'),
+									concat(#{s_year},'-','08'),
+									concat(#{s_year},'-','09')  
+							</when>
+							<when test="s_month == '10' or s_month == '11' or s_month == '12' ">
+									concat(#{s_year},'-','10'),
+									concat(#{s_year},'-','11'),
+									concat(#{s_year},'-','12')  
+							</when>
+						</choose>
+						)
+					</when>
+					<otherwise>AND DATE_FORMAT(d.CREATE_TIME, '%Y') = #{s_year}</otherwise>
+				</choose>
+			) and u.JOB_STATUS != 4
+		) 
+		<choose>
+			<when test="s_business == 'monthly' ">AND DATE_FORMAT(e.CREATE_DATE, '%Y-%m') = #{s_date}</when>
+			<when test="s_business == 'quarter' ">
+				AND DATE_FORMAT(e.CREATE_DATE, '%Y-%m') in (
+				<choose>
+					<when test="s_month == '01' or s_month == '02' or s_month == '03' ">
+							concat(#{s_year},'-','01'),
+							concat(#{s_year},'-','02'),
+							concat(#{s_year},'-','03')  
+					</when>
+					<when test="s_month == '04' or s_month == '05' or s_month == '06' ">
+							concat(#{s_year},'-','04'),
+							concat(#{s_year},'-','05'),
+							concat(#{s_year},'-','06')  
+					</when>
+					<when test="s_month == '07' or s_month == '08' or s_month == '09' ">
+							concat(#{s_year},'-','07'),
+							concat(#{s_year},'-','08'),
+							concat(#{s_year},'-','09')  
+					</when>
+					<when test="s_month == '10' or s_month == '11' or s_month == '12' ">
+							concat(#{s_year},'-','10'),
+							concat(#{s_year},'-','11'),
+							concat(#{s_year},'-','12')  
+					</when>
+				</choose>
+				)
+			</when>
+			<otherwise>AND DATE_FORMAT(e.CREATE_DATE, '%Y') = #{s_year}</otherwise>
+		</choose>
+	</select>
+	<select id="existDeptNameNumber" resultType="java.lang.Long">
+		select count(0) from SYS_DEPARTMENT where NAME = #{name} and COMPANY_ID = #{companyId}
+	</select>
+	
+	<select id="findDeptList"  resultType="java.util.Map">
+		select
+		d.EID eid,
+		d.NAME name,
+		(select count(EID) from SYS_USER WHERE DEPT_ID = d.EID) count
+		from SYS_DEPARTMENT d
+		where d.COMPANY_ID = #{companyId} and d.TYPE != 5
+	</select>
+	
+	
+	<select id="findDeptDate" resultType="java.util.Map">
+		SELECT NAME name, STAFF_NUM staffNum, num FROM (
+			SELECT t1.`NAME`,t1.STAFF_NUM,
+			(
+				SELECT COUNT(1) FROM SYS_USER WHERE JOB_STATUS != 4 
+				AND COMPANY_ID=#{l_companyId} 
+				and DEPT_CODE like CONCAT(subDeptCode(t1.CODE),'%')
+			) num
+ 			FROM SYS_DEPARTMENT t1 
+ 				WHERE COMPANY_ID = #{l_companyId}
+				and TYPE = 1
+ 		) a 
+	</select>
+
+	<select id="findByPidCount" resultType="long">
+		select count(1) from SYS_DEPARTMENT
+		where COMPANY_ID = #{criteria.l_companyId}
+		and PID = #{criteria.pid}
+	</select>
+
+	<select id="findByPidList" resultType="java.util.Map">
+		select EID eid, PID pid, PNAME pname, NAME name, CODE code,IFNULL(NAME_CH, '') nameCh,DTYPE dtype,
+		case MAIN_JOB
+		when 1 then '总裁' when 2 then '总经理'
+		when 3 then '总监' when 4 then '老板'
+		when 5 then '部长' when 6 then '主任'
+		when 7 then '管理员' when 0 then '董事长'
+		when 8 then '组长'
+		else '其他'
+		end mainJob,
+		case LESS_JOB
+		when 1 then '副总裁' when 2 then '副总经理'
+		when 3 then '副总监' when 4 then '副经理'
+		when 5 then '副部长' when 6 then '副主任'
+		when 7 then '副管理员' when 0 then '副董事长'
+		when 8 then '副组长'
+		else '其他'
+		end lessJob
+		from SYS_DEPARTMENT
+		where COMPANY_ID = #{criteria.l_companyId}
+		and PID = #{criteria.pid}
+	</select>
+	<select id="findByPpidCount" resultType="long">
+		select count(1) from SYS_DEPARTMENT
+		where COMPANY_ID = #{criteria.l_companyId}
+		and PID in (select EID from SYS_DEPARTMENT where PID = #{criteria.pid})
+	</select>
+
+	<select id="findByPpidList" resultType="java.util.Map">
+		select EID eid, PID pid, PNAME pname, NAME name, CODE code,IFNULL(NAME_CH, '') nameCh,DTYPE dtype,
+		case MAIN_JOB
+		when 1 then '总裁' when 2 then '总经理'
+		when 3 then '总监' when 4 then '老板'
+		when 5 then '部长' when 6 then '主任'
+		when 7 then '管理员' when 0 then '董事长'
+		when 8 then '组长'
+		else '其他'
+		end mainJob,
+		case LESS_JOB
+		when 1 then '副总裁' when 2 then '副总经理'
+		when 3 then '副总监' when 4 then '副经理'
+		when 5 then '副部长' when 6 then '副主任'
+		when 7 then '副管理员' when 0 then '副董事长'
+		when 8 then '副组长'
+		else '其他'
+		end lessJob
+		from SYS_DEPARTMENT
+		where COMPANY_ID = #{criteria.l_companyId}
+		and PID in (select EID from SYS_DEPARTMENT where PID = #{criteria.pid})
+	</select>
+
+	<select id="findByPid" resultType="java.util.Map">
+		select
+			EID eid,NAME `name`
+		from SYS_DEPARTMENT
+		where PID = #{pid}
+	</select>
+</mapper>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="DishFeaturesOptionDao">
+	<resultMap id="BaseResultMap" type="com.sg.model.DishFeaturesOption">
+		<id column="EID" property="eid" />
+		<result column="BID" property="bid" />
+		<result column="OPTION_VALUE" property="optionValue" />
+		<result column="NAME" property="name" />
+		<result column="EN_NAME" property="enName" />
+		<result column="MONEY" property="money" />
+		<result column="IS_DEFAULT" property="isDefault" />
+		<result column="IS_DEL" property="isDel" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="UPDATE_TIME" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, BID, OPTION_VALUE, NAME, EN_NAME, MONEY, 
+		IS_DEFAULT, IS_DEL, DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') CREATE_TIME, DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d %H:%i:%s') UPDATE_TIME
+	</sql>
+
+	<insert id="insert" parameterType="com.sg.model.DishFeaturesOption" useGeneratedKeys="true" keyProperty="eid">
+		insert into T_DISH_FEATURES_OPTION (
+			BID, OPTION_VALUE, NAME, EN_NAME, MONEY, 
+			IS_DEFAULT, IS_DEL, CREATE_TIME
+		) values (
+			#{bid}, #{optionValue}, #{name}, #{enName}, #{money}, 
+			#{isDefault}, #{isDel}, now()
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_DISH_FEATURES_OPTION
+		where EID = #{eid}
+	</select>
+	<select id="findByBid" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_DISH_FEATURES_OPTION
+		where BID = #{bid} and IFNULL(IS_DEL,0) != 1
+	</select>
+
+	<update id="update" parameterType="com.sg.model.DishFeaturesOption">
+		update T_DISH_FEATURES_OPTION
+		<set>
+			<if test="bid != null">
+				BID = #{bid},
+			</if>
+			<if test="optionValue != null">
+				OPTION_VALUE = #{optionValue},
+			</if>
+			<if test="name != null">
+				NAME = #{name},
+			</if>
+			<if test="enName != null">
+				EN_NAME = #{enName},
+			</if>
+			<if test="money != null">
+				MONEY = #{money},
+			</if>
+			<if test="isDefault != null">
+				IS_DEFAULT = #{isDefault},
+			</if>
+			<if test="isDel != null">
+				IS_DEL = #{isDel},
+			</if>
+				UPDATE_TIME = now()
+		</set>
+		where EID = #{eid}
+	</update>
+
+</mapper>

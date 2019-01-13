@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 修改说明: 1.修改<context:component-scan以确定要加载的controller,默认为com.**.controller 
+	2.修改class=ControllerClassNameHandlerMapping节点的pathPrefix以确定要生成的前缀 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-4.2.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd"
+	default-autowire="byName">
+
+	<!-- 自动搜索@Controller标注的类 -->
+	<context:component-scan base-package="com.**.restcontroller"/>
+
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>i18n.messages</value>
+				<value>ValidationMessages</value>
+			</list>
+		</property>
+		<property name="defaultEncoding" value="UTF-8"/>
+		<property name="cacheSeconds" value="120"/>
+		<property name="useCodeAsDefaultMessage" value="false"/>
+	</bean>
+
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass"  value="org.hibernate.validator.HibernateValidator"/>
+		<!--不设置则默认为classpath下的ValidationMessages.properties -->
+		<property name="validationMessageSource" ref="messageSource"/>
+	</bean>
+
+	<mvc:annotation-driven validator="validator"/>
+
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/login.json"/>
+			<mvc:exclude-mapping path="/register/isHavaPhone.json"/>
+			<mvc:exclude-mapping path="/register/sendMessage.json"/>
+			<mvc:exclude-mapping path="/register/checkMessage.json"/>
+			<bean id="sharedRenderVariableInterceptor" class="javacommon.interceptor.SharedRenderVariableInterceptor"/>
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/page/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- 文件上传 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8"/>
+		<property name="maxUploadSize" value="20971520"/>
+		<property name="maxInMemorySize" value="1048576"/>
+	</bean>
+
+	<bean id="gZIPCompress" class="javacommon.util.GZIPCompress"/>
+</beans>

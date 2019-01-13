@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CommonCcDao">
+
+	<insert id="insert">
+		INSERT INTO
+		<choose>
+			<when test="type==1">
+				T_SUGGEST_CC
+			</when>
+		</choose>
+		(
+		BID,
+		USER_ID,
+		USER_NAME
+		) VALUES
+		<foreach collection="cc" item="map" separator=",">
+			(
+			#{bid},#{map.eid},#{map.name}
+			)
+		</foreach>
+	</insert>
+	
+	<update id="setStatus" parameterType="map">
+		update T_SUGGEST_CC 
+		<set>
+			<choose>
+				<when test="s_operate == 'reply' ">IS_REPLY</when>
+				<when test="s_operate == 'delete' ">IS_DEL</when>
+			</choose> = #{i_status}
+		</set>
+		<where>
+			BID = #{l_bid} and USER_ID = #{l_userId} 
+		</where>
+	</update>
+
+	<select id="findCcList" resultType="java.util.Map" useCache="true">
+		SELECT
+		USER_ID userId,
+		USER_NAME userName
+		from 
+		<choose>
+			<when test="btype==1">
+				T_SUGGEST_CC
+			</when>
+		</choose>
+		 where BID = #{bid}
+	</select>
+
+	
+
+</mapper>

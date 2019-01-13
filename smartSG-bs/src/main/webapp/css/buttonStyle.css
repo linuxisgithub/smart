@@ -1,0 +1,75 @@
+.submit-btn, .reset-btn, .return_btn,
+.up-btn, .down-btn{
+	margin-right: 16px;
+    width: 120px;
+	height: 36px;
+	line-height:36px;
+	background-position: 13px center !important;
+	font-family: 微软雅黑, arial, sans-serif;
+	font-size: 14px;
+	color:#fff;
+	background-color: #3da8f5;
+	border-radius: 4px;
+	cursor: pointer;
+	padding-left: 45px;
+	padding-right: 15px;
+	margin-top: 13px; 
+}
+
+button {
+	border: 0px;
+}
+
+button[disabled] {
+	cursor: not-allowed!important;
+}
+
+.layer-footer-btn{
+	position: fixed;
+	bottom: 0px;
+	height: 60px;
+	line-height: 60px;
+	width: 100%;
+	background-color: #fff;
+}
+
+.footer-btn-left {
+	width: 260px;
+	margin-left: 34px;
+	float: left;
+}
+
+.footer-btn-right{
+float: right;
+margin-right: 34px
+}
+
+.submit-btn {
+	background: url(../images/icons/submit_icon.png) no-repeat;
+	background-color: #3da8f5;
+}
+
+.reset-btn {
+	background: url(../images/icons/clear_icon.png) no-repeat;
+	background-color: #3da8f5;
+}
+
+.return_btn {
+	background: url(../images/icons/return_icon.png) no-repeat;
+	background-position: 13px center;
+	background-color: #3da8f5;
+}
+
+.up-btn {
+	background: url(../images/icons/syb.png) no-repeat;
+	background-color: #3da8f5;
+}
+
+.down-btn {
+	background: url(../images/icons/xyb.png) no-repeat;
+	background-color: #3da8f5;
+}
+
+.clear {
+	clear: both;
+}

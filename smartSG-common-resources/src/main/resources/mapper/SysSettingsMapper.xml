@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysSettingsDao">
+	<resultMap id="BaseResultMap" type="com.system.model.SysSettings">
+		<id column="EID" property="eid" />
+		<result column="COMPANY_ID" property="companyId" />
+		<result column="BID" property="bid" />
+		<result column="CODE" property="code" />
+		<result column="VALUE" property="value" />
+		<result column="IS_USE" property="isUse" />
+		<result column="REMARK" property="remark" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, COMPANY_ID, BID, CODE, VALUE, IS_USE, 
+		REMARK
+	</sql>
+
+	<insert id="insert" parameterType="com.system.model.SysSettings" useGeneratedKeys="true" keyProperty="eid">
+		insert into SYS_SETTINGS (
+			COMPANY_ID, BID, CODE, VALUE, IS_USE, 
+			REMARK
+		) values (
+			#{companyId}, #{bid}, #{code}, #{value}, #{isUse}, 
+			#{remark}
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_SETTINGS
+		where EID = #{eid}
+	</select>
+
+	<update id="update" parameterType="com.system.model.SysSettings">
+		update SYS_SETTINGS
+		<set>
+			<if test="companyId != null">
+				COMPANY_ID = #{companyId},
+			</if>
+			<if test="bid != null">
+				BID = #{bid},
+			</if>
+			<if test="code != null">
+				CODE = #{code},
+			</if>
+			<if test="value != null">
+				VALUE = #{value},
+			</if>
+			<if test="isUse != null">
+				IS_USE = #{isUse},
+			</if>
+			<if test="remark != null">
+				REMARK = #{remark},
+			</if>
+		</set>
+		where EID = #{eid}
+	</update>
+
+	<select id="getConfirmNum" resultType="long">
+		select count(DISTINCT BID) count from SYS_SETTINGS
+		where COMPANY_ID = #{companyId} and CODE = 's_menu'
+		and BID in
+	 	<foreach item="item" index="index" collection="idIds" open="(" separator="," close=")">  
+  			#{item}  
+ 		</foreach>  
+	</select>
+	
+	<select id="hasMenuConfirm" resultType="int">
+		select count(EID) from SYS_SETTINGS
+		where COMPANY_ID = #{companyId} and BID = #{bid}
+		and CODE = #{code}
+	</select>
+</mapper>

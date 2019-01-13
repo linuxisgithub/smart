@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AnnexDao">
+	<resultMap id="BaseResultMap" type="com.sg.model.Annex">
+		<id column="EID" property="eid" />
+		<result column="USER_ID" property="userId" />
+		<result column="PATH" property="path" />
+		<result column="SRC_NAME" property="srcName" />
+		<result column="TYPE" property="type" />
+		<result column="BID" property="bid" />
+		<result column="PID" property="pid" />
+		<result column="BTYPE" property="btype" />
+		<result column="NAME" property="name" />
+		<result column="FILE_SIZE" property="fileSize" />
+		<result column="SHOW_TYPE" property="showType" />
+		<result column="PATH_SMALL" property="pathSmall" />
+		<result column="CREATE_TIME" property="createTime" />
+	</resultMap>
+
+
+	<sql id="Base_Column_List">
+		EID, USER_ID, PATH, SRC_NAME, TYPE, BID, PID, BTYPE, NAME,
+		FILE_SIZE,
+		SHOW_TYPE,
+		PATH_SMALL, DATE_FORMAT(CREATE_TIME,'%Y-%m-%d')
+		CREATE_TIME
+	</sql>
+
+	<select id="findAllName" resultType="String">
+		select IFNULL(NAME,"") from
+		T_ANNEX where NAME is not null
+	</select>
+
+	<delete id="deleteAll">
+		delete from T_ANNEX;
+	</delete>
+
+	<select id="findList" resultType="java.util.Map">
+		select EID eid, PATH path,
+		SRC_NAME srcName, TYPE type,
+		FILE_SIZE fileSize, SHOW_TYPE showType
+		from T_ANNEX
+		where BTYPE = #{btype} and BID = #{bid}
+	</select>
+	
+	<select id="findListMarket" resultType="java.util.Map">
+		select EID eid, PATH path,
+		SRC_NAME srcName, TYPE type,
+		FILE_SIZE fileSize, SHOW_TYPE showType
+		from T_ANNEX
+		where BTYPE = #{btype} and BID = #{bid}
+<!-- 		(select EID from T_MARKET_BUSINESS_FEI where PID=#{bid} ) -->
+	</select>
+
+	<select id="findNameList" resultType="String">
+		select
+		SRC_NAME srcName
+		from T_ANNEX
+		where BTYPE = #{btype} and BID = #{bid}
+	</select>
+
+	<select id="findNameListByBid" resultType="String">
+		select NAME name
+		from
+		T_ANNEX
+		where BTYPE = #{btype} and BID = #{bid}
+	</select>
+
+	<select id="findNameListByPid" resultType="String">
+		select NAME name
+		from T_ANNEX
+		where BTYPE in
+		<foreach collection="btypes" item="t" separator="," open="("
+			close=")">
+			#{t}
+		</foreach>
+		and
+		PID = #{pid}
+	</select>
+
+
+	<delete id="delete" parameterType="java.util.Map">
+		delete from T_ANNEX
+		where BTYPE
+		= #{btype} and BID = #{bid}
+	</delete>
+
+	<delete id="deleteByPid">
+		delete from T_ANNEX where BTYPE in
+		<foreach collection="btypes" item="t" separator="," open="("
+			close=")">
+			#{t}
+		</foreach>
+		and PID = #{pid}
+	</delete>
+
+	<insert id="insert" useGeneratedKeys="true">
+		insert into T_ANNEX (USER_ID,
+		PATH, SRC_NAME, TYPE,
+		BID, PID, BTYPE,
+		NAME, FILE_SIZE,
+		SHOW_TYPE, PATH_SMALL, CREATE_TIME,FILE_TYPE,DOWN_COUNT
+		)
+		values
+		<foreach collection="list" separator="," item="t">
+			(#{t.userId},
+			#{t.path}, #{t.srcName}, #{t.type},
+			#{t.bid}, #{t.pid}, #{t.btype},
+			#{t.name}, #{t.fileSize},
+			#{t.showType}, #{t.pathSmall},
+			#{t.createTime},#{t.fifleType}, '0'
+			)
+		</foreach>
+	</insert>
+
+	<insert id="saveBatch" useGeneratedKeys="true">
+		insert into T_ANNEX (USER_ID,
+		PATH, SRC_NAME, TYPE,
+		BID, PID, BTYPE,
+		NAME, FILE_SIZE,
+		SHOW_TYPE, PATH_SMALL, CREATE_TIME
+		)
+		values
+		<foreach collection="annexList" separator="," item="t">
+			(#{t.userId},
+			#{t.path}, #{t.srcName}, #{t.type},
+			#{bid}, #{pid},
+			#{btype},
+			#{t.name}, #{t.fileSize},
+			#{t.showType}, #{t.pathSmall},
+			#{t.createTime}
+			)
+		</foreach>
+	</insert>
+
+	<!-- 分类文件总数 -->
+	<select id="findFileCountByType" resultType="java.util.Map">
+
+		<!-- 采购开单和货品附件 -->
+		select count(1) count,'采购开单' fileType from T_ANNEX where
+		USER_ID =
+		#{l_userId} AND BTYPE IN('2','22')
+
+		union all
+
+		<!-- 采购退货和货品附件 -->
+		select count(1) count,'采购退货' fileType from T_ANNEX where USER_ID =
+		#{l_userId} AND BTYPE IN('3','23')
+
+		union all
+
+		<!-- 销售开单和货品附件 -->
+		select count(1) count,'销售开单' fileType from T_ANNEX where USER_ID =
+		#{l_userId} AND BTYPE IN('5','24')
+
+		union all
+
+		<!-- 销售退货和货品附件 -->
+		select count(1) count,'销售退货' fileType from T_ANNEX where USER_ID =
+		#{l_userId} AND BTYPE IN('6','25')
+
+		union all
+
+		<!-- 其他入库和货品附件 -->
+		select count(1) count,'其他入库' fileType from T_ANNEX where USER_ID =
+		#{l_userId} AND BTYPE IN('8','26')
+
+		union all
+
+		<!-- 其他出库和货品附件 -->
+		select count(1) count,'其它出库' fileType from T_ANNEX where USER_ID =
+		#{l_userId} AND BTYPE IN('9','27')
+
+		union all
+
+		<!-- 其他收入和货品附件 -->
+		select count(1) count,'其他收入' fileType from T_ANNEX where USER_ID =
+		#{l_userId} AND BTYPE IN('11','28')
+
+		union all
+
+		<!-- 其他支出和货品附件 -->
+		select count(1) count,'其他支出' fileType from T_ANNEX where USER_ID =
+		#{l_userId} AND BTYPE IN('12','29')
+
+		union all
+
+		<!--客户通知 -->
+		select count(1) count,'客户通知' fileType from T_ANNEX where USER_ID =
+		#{l_userId} AND BTYPE = '16'
+
+		union all
+
+		<!--客户关怀 -->
+		select count(1) count,'客户关怀' fileType from T_ANNEX where USER_ID =
+		#{l_userId} AND BTYPE = '14'
+
+		union all
+
+		<!--客户资料 -->
+		select count(1) count,'客户资料' fileType from T_ANNEX where USER_ID =
+		#{l_userId} AND BTYPE = '17'
+
+		union all
+
+		<!--货品资料 -->
+		select count(1) count,'货品资料' fileType from T_ANNEX where USER_ID =
+		#{l_userId} AND BTYPE = '19'
+
+		union all
+
+		<!--资金账户 -->
+		select count(1) count,'资金账户' fileType from T_ANNEX where USER_ID =
+		#{l_userId} AND BTYPE = '20'
+
+	</select>
+
+	<!-- 查询文件总数 -->
+	<select id="findFileCount" resultType="java.util.Map">
+		select count(1) total from
+		T_ANNEX where USER_ID = #{l_userId}
+	</select>
+
+
+	<select id="findNameByEids" resultType="String">
+		select NAME name
+		from T_ANNEX
+		where EID in
+		<foreach collection="array" item="t" separator="," open="("
+			close=")">
+			#{t}
+		</foreach>
+	</select>
+
+	<delete id="deleteByEids">
+		delete from T_ANNEX where EID in
+		<foreach collection="array" item="t" separator="," open="("
+			close=")">
+			#{t}
+		</foreach>
+
+	</delete>
+	<select id="countCompanyFileSize" resultType="double">
+		select ifnull(sum(FILE_SIZE)/(1000*1000*1000), 0) from T_ANNEX where USER_ID in (
+			select EID from SYS_USER where COMPANY_ID = #{companyId}
+		)
+	</select>
+	
+	<update id="addDownCount">
+	update T_ANNEX set DOWN_COUNT = ifnull(DOWN_COUNT, 0) + 1
+	where EID = #{eid}
+	</update>
+	
+	<update id="isDelete">
+		update T_ANNEX
+		set IS_DEL = 1 
+		where EID = #{eid}
+	</update>
+</mapper>

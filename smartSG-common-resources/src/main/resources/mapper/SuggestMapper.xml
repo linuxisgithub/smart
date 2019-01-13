@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SuggestDao">
+	<resultMap id="BaseResultMap" type="com.sg.model.Suggest">
+		<id column="EID" property="eid" />
+		<result column="COMPANY_ID" property="companyId" />
+		<result column="DEPT_ID" property="deptId" />
+		<result column="SEND_ID" property="sendId" />
+		<result column="RECEIVE_ID" property="receiveId" />
+		<result column="SEND_DATE" property="sendDate" />
+		<result column="KIND" property="kind" />
+		<result column="KIND_NAME" property="kindName" />
+		<result column="CONTENT" property="content" />
+		<result column="IS_REPLY" property="isReply" />
+		<result column="IS_DEL" property="isDel" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="UPDATE_TIME" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, COMPANY_ID, DEPT_ID, SEND_ID, RECEIVE_ID, SEND_DATE, 
+		KIND, CONTENT, IS_REPLY, IS_DEL, 
+		DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') CREATE_TIME, 
+		DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d %H:%i:%s') UPDATE_TIME,
+		case KIND 
+			when 1 then '商业合作'
+			when 2 then '投诉结果'
+			when 3 then '意见反馈'
+			when 4 then '其他反馈'
+			when 5 then '系统消息'
+		end KIND_NAME
+	</sql>
+
+	<insert id="insert" parameterType="com.sg.model.Suggest" useGeneratedKeys="true" keyProperty="eid">
+		insert into T_SUGGEST (
+			COMPANY_ID, DEPT_ID, SEND_ID, RECEIVE_ID, SEND_DATE, 
+			KIND, CONTENT, CREATE_TIME, UPDATE_TIME
+
+		) values (
+			#{companyId}, #{deptId}, #{sendId}, #{receiveId}, #{sendDate}, 
+			#{kind}, #{content}, now(), now()
+
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_SUGGEST
+		where EID = #{eid}
+	</select>
+
+	<update id="update" parameterType="com.sg.model.Suggest">
+		update T_SUGGEST
+		<set>
+			<if test="companyId != null">
+				COMPANY_ID = #{companyId},
+			</if>
+			<if test="deptId != null">
+				DEPT_ID = #{deptId},
+			</if>
+			<if test="sendId != null">
+				SEND_ID = #{sendId},
+			</if>
+			<if test="receiveId != null">
+				RECEIVE_ID = #{receiveId},
+			</if>
+			<if test="kind != null">
+				KIND = #{kind},
+			</if>
+			<if test="content != null">
+				CONTENT = #{content},
+			</if>
+			<if test="isReply != null">
+				IS_REPLY = #{isReply},
+			</if>
+			<if test="isDel != null">
+				IS_DEL = #{isDel},
+			</if>
+				UPDATE_TIME = now(),
+		</set>
+		where EID = #{eid}
+	</update>
+	
+	<select id="findPagedCount" resultType="long">
+		<choose>
+		<when test="criteria.s_business == 'send' ">
+			SELECT count(a.eid) from (
+				SELECT s.EID eid
+				FROM T_SUGGEST s
+				<where>
+					s.COMPANY_ID = #{criteria.l_companyId} 
+					and s.SEND_ID = #{criteria.l_userId} 
+					and s.IS_DEL != 1
+				</where>
+				
+				union all 
+				
+				SELECT r.EID eid
+				FROM T_REPLY r 
+				<where>
+					r.COMPANY_ID = #{criteria.l_companyId} 
+					and r.SEND_ID = #{criteria.l_userId}
+					and r.SEND_IS_DEL != 1 
+				</where>
+			) a
+		</when>
+		<when test="criteria.s_business == 'receive' ">
+			SELECT COUNT(a.eid) FROM (
+				SELECT
+					s.EID eid
+				FROM T_SUGGEST s 
+				INNER JOIN T_SUGGEST_CC c on 
+					c.BID = s.EID 
+					and c.USER_ID = #{criteria.l_userId}
+					and c.IS_DEL != 1
+				<where>
+					s.COMPANY_ID = #{criteria.l_companyId}
+				</where>
+				
+				union all 
+			
+				SELECT
+					r.EID eid
+				FROM T_REPLY r 
+				inner join T_SUGGEST s on s.EID = r.BID 
+				left join SYS_USER u ON u.EID = s.SEND_ID
+				<where>
+					r.COMPANY_ID = #{criteria.l_companyId} 
+					and s.SEND_ID = #{criteria.l_userId}
+					and r.RECEIVE_IS_DEL != 1
+				</where>
+			) a
+		</when>
+	</choose>
+	</select>
+	<resultMap id="BaseResultMap2" type="com.alibaba.fastjson.JSONObject">
+		<id column="EID" property="eid"/>
+		<collection property="ccList" column="{bid=EID,btype=BTYPE}" select="CommonCcDao.findCcList"></collection>
+	</resultMap>
+	<select id="findPagedList" resultMap="BaseResultMap2">
+	<choose>
+		<when test="criteria.s_business == 'send' ">
+			select * from (
+				SELECT
+					s.EID,
+					1 BTYPE,
+					s.SEND_ID `sendName`,
+					'suggest' `msgType`,
+					DATE_FORMAT(s.SEND_DATE,'%Y-%m-%d') `sendDate`,
+					case s.KIND
+						when 1 then '商业合作'
+						when 2 then '投诉结果'
+						when 3 then '意见反馈'
+						when 4 then '其他反馈'
+						when 5 then '系统消息'
+					end `kind`,
+					if(CHAR_LENGTH(s.CONTENT) > 10,CONCAT(left(s.CONTENT,10),'...'),s.CONTENT) `content`,
+					case s.IS_REPLY 
+						when 0 then '未回复'
+						when 1 then '已回复'
+					end `status`,
+					s.IS_REPLY `isReply`
+				FROM T_SUGGEST s
+				<where>
+					s.COMPANY_ID = #{criteria.l_companyId} 
+					and s.SEND_ID = #{criteria.l_userId} 
+					and s.IS_DEL != 1
+				</where>
+				
+				union all 
+				
+				SELECT
+					r.EID,
+					1 BTYPE,
+					u.NAME sendName,
+					'reply' `msgType`,
+					DATE_FORMAT(r.REPLY_DATE,'%Y-%m-%d') `sendDate`,
+					case s.KIND
+							when 1 then '商业合作'
+							when 2 then '投诉结果'
+							when 3 then '意见反馈'
+							when 4 then '其他反馈'
+							when 5 then '系统消息'
+					end `kind`,
+					if(CHAR_LENGTH(r.CONTENT) > 10,CONCAT(left(r.CONTENT,10),'...'),r.CONTENT) `content`,
+					'已回复' `status`,
+					1 `isReply`
+				FROM T_REPLY r 
+				inner join T_SUGGEST s on s.EID = r.BID 
+				left join SYS_USER u ON u.EID = s.SEND_ID
+				<where>
+					r.COMPANY_ID = #{criteria.l_companyId} 
+					and r.SEND_ID = #{criteria.l_userId}
+					and r.SEND_IS_DEL != 1 
+				</where>
+			)t order by t.`isReply` ASC, t.`sendDate` DESC
+		</when>
+		<when test="criteria.s_business == 'receive' ">
+			select * from (
+				SELECT
+					s.EID,
+					1 BTYPE,
+					u.NAME `sendName`,
+					'suggest' `msgType`,
+					DATE_FORMAT(s.SEND_DATE,'%Y-%m-%d') `sendDate`,
+					case s.KIND
+						when 1 then '商业合作'
+						when 2 then '投诉结果'
+						when 3 then '意见反馈'
+						when 4 then '其他反馈'
+						when 5 then '系统消息'
+					end `kind`,
+					if(CHAR_LENGTH(s.CONTENT) > 10,CONCAT(left(s.CONTENT,10),'...'),s.CONTENT) `content`,
+					case c.IS_REPLY 
+						when 0 then '未回复'
+						when 1 then '已回复'
+						when 2 then '已忽略'
+					end `status`,
+					c.IS_REPLY  `isReply`
+				FROM T_SUGGEST s 
+				LEFT JOIN SYS_USER u on u.EID = s.SEND_ID 
+				INNER JOIN T_SUGGEST_CC c on 
+					c.BID = s.EID 
+					and c.USER_ID = #{criteria.l_userId}
+					and c.IS_DEL != 1
+				<where>
+					s.COMPANY_ID = #{criteria.l_companyId}
+				</where>
+				
+				union all 
+			
+				SELECT
+					r.EID,
+					1 BTYPE,
+					u.NAME `sendName`,
+					'reply' `msgType`,
+					DATE_FORMAT(r.REPLY_DATE,'%Y-%m-%d') `sendDate`,
+					case s.KIND
+							when 1 then '商业合作'
+							when 2 then '投诉结果'
+							when 3 then '意见反馈'
+							when 4 then '其他反馈'
+							when 5 then '系统消息'
+					end `kind`,
+					if(CHAR_LENGTH(r.CONTENT) > 10,CONCAT(left(r.CONTENT,10),'...'),r.CONTENT) `content`,
+					'已回复' `status`,
+					1 `isReply`
+				FROM T_REPLY r 
+				inner join T_SUGGEST s on s.EID = r.BID 
+				left join SYS_USER u ON u.EID = r.SEND_ID
+				<where>
+					r.COMPANY_ID = #{criteria.l_companyId} 
+					and s.SEND_ID = #{criteria.l_userId}
+					and r.RECEIVE_IS_DEL != 1
+				</where>
+			)t order by t.`isReply` ASC , t.`sendDate` DESC
+		</when>
+	</choose>
+ 	</select>
+
+	<select id="findSendUserImAccount" resultType="java.lang.String">
+		select u.IM_ACCOUNT from T_SUGGEST s inner join SYS_USER u on u.EID = s.SEND_ID where s.EID = #{bid}
+	</select>
+</mapper>

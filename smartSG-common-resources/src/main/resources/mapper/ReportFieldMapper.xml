@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ReportFieldDao">
+	<resultMap id="BaseResultMap" type="com.sg.model.ReportField">
+		<id column="EID" property="eid" />
+		<result column="REPORT_ID" property="reportId" />
+		<result column="FIELD_ID" property="fieldId" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="UPDATE_TIME" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, REPORT_ID, FIELD_ID, DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') CREATE_TIME, DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d %H:%i:%s') UPDATE_TIME
+	</sql>
+
+	<insert id="insert" parameterType="com.sg.model.ReportField" useGeneratedKeys="true" keyProperty="eid">
+		insert into T_REPORT_FIELD (
+			REPORT_ID, FIELD_ID, CREATE_TIME
+		) values (
+			#{reportId}, #{fieldId}, now()
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from T_REPORT_FIELD
+		where EID = #{eid}
+	</select>
+
+	<update id="update" parameterType="com.sg.model.ReportField">
+		update T_REPORT_FIELD
+		<set>
+			<if test="reportId != null">
+				REPORT_ID = #{reportId},
+			</if>
+			<if test="fieldId != null">
+				FIELD_ID = #{fieldId},
+			</if>
+			<if test="createTime != null">
+				CREATE_TIME = #{createTime},
+			</if>
+			<if test="updateTime != null">
+				UPDATE_TIME = #{updateTime},
+			</if>
+		</set>
+		where EID = #{eid}
+	</update>
+
+	<select id="findByReportId" parameterType="java.lang.Long" resultType="long">
+		select
+		FIELD_ID
+		from T_REPORT_FIELD
+		where REPORT_ID = #{reportId}
+	</select>
+
+	<delete id="delByReportId"  parameterType="java.lang.Long">
+        delete  from T_REPORT_FIELD where REPORT_ID = #{reportId}
+	</delete>
+
+	<select id="findFieldNameByReportId" parameterType="java.lang.Long" resultType="map">
+	select f.`NAME` name
+			from T_REPORT_FIELD rf,T_FIELD f
+			where rf.FIELD_ID = f.EID and rf.REPORT_ID = #{reportId}
+	</select>
+
+</mapper>

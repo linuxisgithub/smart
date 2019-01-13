@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysDepartmentInfoTwDao">
+	<resultMap id="BaseResultMap" type="com.system.model.SysDepartmentInfoTw">
+		<id column="EID" property="eid" />
+		<result column="DEPT_ID" property="deptId" />
+		<result column="DEPT_NAME" property="deptName" />
+		<result column="COMPANY_ID" property="companyId" />
+		<result column="MY_ID" property="myId" />
+		<result column="HOUSE_NUMBER" property="houseNumber" />
+		<result column="ALIPAY_NAME" property="alipayName" />
+		<result column="ALIPAY_ACCOUNT" property="alipayAccount" />
+		<result column="BANK_CARD_ACCOUNT" property="bankCardAccount" />
+		<result column="BANK" property="bank" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="UPDATE_TIME" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, DEPT_ID, DEPT_NAME, COMPANY_ID, MY_ID, HOUSE_NUMBER, 
+		ALIPAY_NAME, ALIPAY_ACCOUNT, BANK_CARD_ACCOUNT, BANK, DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') CREATE_TIME, DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d %H:%i:%s') UPDATE_TIME
+
+	</sql>
+
+	<insert id="insert" parameterType="com.system.model.SysDepartmentInfoTw" useGeneratedKeys="true" keyProperty="eid">
+		insert into SYS_DEPARTMENT_INFO_TW (
+			DEPT_ID, DEPT_NAME, COMPANY_ID, MY_ID, HOUSE_NUMBER, 
+			ALIPAY_NAME, ALIPAY_ACCOUNT, BANK_CARD_ACCOUNT, BANK, CREATE_TIME
+
+		) values (
+			#{deptId}, #{deptName}, #{companyId}, #{myId}, #{houseNumber}, 
+			#{alipayName}, #{alipayAccount}, #{bankCardAccount}, #{bank}, now()
+
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_DEPARTMENT_INFO_TW
+		where EID = #{eid}
+	</select>
+
+	<select id="findByBid" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_DEPARTMENT_INFO_TW
+		where DEPT_ID = #{bid}
+	</select>
+
+	<update id="update" parameterType="com.system.model.SysDepartmentInfoTw">
+		update SYS_DEPARTMENT_INFO_TW
+		<set>
+			<if test="deptId != null">
+				DEPT_ID = #{deptId},
+			</if>
+			<if test="deptName != null">
+				DEPT_NAME = #{deptName},
+			</if>
+			<if test="companyId != null">
+				COMPANY_ID = #{companyId},
+			</if>
+			<if test="myId != null">
+				MY_ID = #{myId},
+			</if>
+			<if test="houseNumber != null">
+				HOUSE_NUMBER = #{houseNumber},
+			</if>
+			<if test="alipayName != null">
+				ALIPAY_NAME = #{alipayName},
+			</if>
+			<if test="alipayAccount != null">
+				ALIPAY_ACCOUNT = #{alipayAccount},
+			</if>
+			<if test="bankCardAccount != null">
+				BANK_CARD_ACCOUNT = #{bankCardAccount},
+			</if>
+			<if test="bank != null">
+				BANK = #{bank},
+			</if>
+			UPDATE_TIME = now(),
+		</set>
+		where EID = #{eid}
+	</update>
+
+</mapper>

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysCompanyDao">
+	<resultMap id="BaseResultMap" type="com.system.model.SysCompany">
+		<id column="EID" property="eid" />
+		<result column="NAME" property="name" />
+		<result column="TELEPHONE" property="telephone" />
+		<result column="LEVEL" property="level" />
+		<result column="IS_VIP" property="isVip" />
+		<result column="ADMIN_PASSWORD" property="adminPassword" />
+		<result column="EXPIRE_TIME" property="expireTime" />
+		<result column="REGION" property="region" />
+		<result column="FIXED_TELEPHONE" property="fixedTelephone" />
+		<result column="DNS_ADDRESS" property="dnsAddress" />
+		<result column="SHORT_NAME" property="shortName" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="CODE" property="code" />
+		<result column="STAFF_NUM" property="staffNum" />
+		<result column="ADDRESS" property="address" />
+		<result column="LEGAL_PERSON" property="legalPerson" />
+		<result column="WEB_ADDRESS" property="webAddress" />
+		<result column="CASE_STATUS" property="caseStatus" />
+		<result column="NEED_LEAD" property="needLead" />
+		<result column="VIP_LEVEL" property="vipLevel" />
+		<result column="IS_SPEC" property="isSpec" />
+		<result column="IS_LOCATION" property="isLocation" />
+		<result column="IS_OUT_WORK" property="isOutWork" />
+		<result column="NEED_LOCK" property="needLock" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, NAME, TELEPHONE, LEVEL, IS_VIP, ADMIN_PASSWORD, 
+		DATE_FORMAT(EXPIRE_TIME,'%Y-%m-%d %H:%I:%S') EXPIRE_TIME, 
+		REGION, FIXED_TELEPHONE, DNS_ADDRESS, SHORT_NAME, DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') CREATE_TIME, 
+		CODE, STAFF_NUM, ADDRESS, LEGAL_PERSON, WEB_ADDRESS,CASE_STATUS,NEED_LEAD,VIP_LEVEL,IS_SPEC,
+		NEED_LOCK
+	</sql>
+
+	<insert id="insert" parameterType="com.system.model.SysCompany" useGeneratedKeys="true" keyProperty="eid">
+		insert into SYS_COMPANY (
+			NAME, TELEPHONE, LEVEL, IS_VIP, ADMIN_PASSWORD, 
+			EXPIRE_TIME, REGION, FIXED_TELEPHONE, DNS_ADDRESS, SHORT_NAME, CREATE_TIME, 
+			CODE, STAFF_NUM, ADDRESS, LEGAL_PERSON, WEB_ADDRESS,CASE_STATUS,NEED_LEAD,
+			VIP_LEVEL,IS_SPEC,IS_LOCATION,IS_OUT_WORK,NEED_LOCK
+		) values (
+			#{name}, #{telephone}, #{level}, #{isVip}, #{adminPassword}, 
+			#{expireTime}, #{region}, #{fixedTelephone}, #{dnsAddress}, #{shortName}, now(), 
+			#{code}, #{staffNum}, #{address}, #{legalPerson}, #{webAddress},#{caseStatus},#{needLead},
+			#{vipLevel},#{isSpec},#{isLocation},#{isOutWork},'0'
+		)
+	</insert>
+
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_COMPANY
+		where EID = #{eid}
+	</select>
+
+	<update id="update" parameterType="com.system.model.SysCompany">
+		update SYS_COMPANY
+		<set>
+			<if test="name != null">
+				NAME = #{name},
+			</if>
+			<if test="telephone != null">
+				TELEPHONE = #{telephone},
+			</if>
+			<if test="level != null">
+				LEVEL = #{level},
+			</if>
+			<if test="isVip != null">
+				IS_VIP = #{isVip},
+			</if>
+			<if test="adminPassword != null">
+				ADMIN_PASSWORD = #{adminPassword},
+			</if>
+			<if test="expireTime != null">
+				EXPIRE_TIME = #{expireTime},
+			</if>
+			<if test="region != null">
+				REGION = #{region},
+			</if>
+			<if test="fixedTelephone != null">
+				FIXED_TELEPHONE = #{fixedTelephone},
+			</if>
+			<if test="dnsAddress != null">
+				DNS_ADDRESS = #{dnsAddress},
+			</if>
+			<if test="shortName != null">
+				SHORT_NAME = #{shortName},
+			</if>
+			<if test="code != null">
+				CODE = #{code},
+			</if>
+			<if test="staffNum != null">
+				STAFF_NUM = #{staffNum},
+			</if>
+			<if test="address != null">
+				ADDRESS = #{address},
+			</if>
+			<if test="legalPerson != null">
+				LEGAL_PERSON = #{legalPerson},
+			</if>
+			<if test="webAddress != null">
+				WEB_ADDRESS = #{webAddress},
+			</if>
+			<if test="isLocation != null">
+				IS_LOCATION = #{isLocation},
+			</if>
+			<if test="isOutWork != null">
+				IS_OUT_WORK = #{isOutWork},
+			</if>
+		</set>
+		where EID = #{eid}
+	</update>
+
+	<select id="findCount"  resultType="java.lang.Long">
+		select
+		count(1)
+		from SYS_COMPANY
+		where TELEPHONE = #{phone}
+	</select>
+	<select id="findByCode" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_COMPANY
+		where CODE = #{companyCode}
+	</select>
+	
+	<select id="findByDndAddress" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_COMPANY
+		where DNS_ADDRESS = #{dnsAddress}
+	</select>
+	
+	<select id="findIsSpec" resultType="java.lang.Integer">
+		select
+		IS_SPEC
+		from SYS_COMPANY
+		where EID = #{eid}
+	</select>
+	
+	<update id="updateCaseStatus">
+		update SYS_COMPANY
+		set CASE_STATUS = #{caseStatus}
+		where EID = #{companyId}
+	</update>
+	
+	<update id="setUnLead" parameterType="java.lang.Long">
+		update SYS_COMPANY
+		set NEED_LEAD = 0
+		where EID = #{eid}
+	</update>
+	
+	<update id="clearCase" parameterType="java.lang.Long">
+		delete from T_HOLIDAY where COMPANY_ID = #{eid};
+		delete from T_TRAVEL where COMPANY_ID = #{eid};
+		delete from T_AFFAIR where COMPANY_ID = #{eid};
+		delete from T_LOAN where COMPANY_ID = #{eid};
+		delete from T_OVER_APPALY where COMPANY_ID = #{eid};
+		
+		delete from T_WORK_LOG where COMPANY_ID = #{eid};
+		
+		delete from T_GOODS_CHANGE where PID in (select EID from T_BUSINESS where COMPANY_ID = #{eid});
+		delete from T_GOODS_PRICE where PID in (select EID from T_BUSINESS where COMPANY_ID = #{eid});
+		delete from T_GOODS_RETURN where PID in (select EID from T_BUSINESS where COMPANY_ID = #{eid});
+		delete from T_GOODS_GIVE where PID in (select EID from T_BUSINESS where COMPANY_ID = #{eid});
+		
+		delete from T_BUSINESS where COMPANY_ID = #{eid};
+		
+		
+		delete from T_ORDER_ITEM where BID in (select EID from T_ORDER where COMPANY_ID = #{eid});
+		delete from T_ORDER where COMPANY_ID = #{eid};
+		
+		delete from T_SALE_RETURN_ITEM where BID in (select EID from T_SALE_RETURN where COMPANY_ID = #{eid});
+		delete from T_SALE_RETURN where COMPANY_ID = #{eid};
+		
+		delete from T_LOGISTICS_ITEM where COMPANY_ID = #{eid};
+		
+		delete from T_MARKET_GOODS where COMPANY_ID = #{eid};
+		
+		delete from T_CUSTOMER_RECEIPT where BID in (select EID from T_CUSTOMER where COMPANY_ID = #{eid});
+		delete from T_CUSTOMER_LOGIS where BID in (select EID from T_CUSTOMER where COMPANY_ID = #{eid});
+		delete from T_CUSTOMER_RELATION where BID in (select EID from T_CUSTOMER where COMPANY_ID = #{eid});
+		delete from T_CUSTOMER_CARE where COMPANY_ID = #{eid};
+		
+		delete from T_CUSTOMER where COMPANY_ID = #{eid};
+		delete from T_CUSTOMER_CHANCE where COMPANY_ID = #{eid};
+		
+		delete from T_CONTRACT_TEXT where BID in (select EID from T_CONTRACT where COMPANY_ID = #{eid});
+		delete from T_CONTRACT_SCHEDULE where BID in (select EID from T_CONTRACT where COMPANY_ID = #{eid});
+		delete from T_CONTRACT_REWARD where BID in (select EID from T_CONTRACT where COMPANY_ID = #{eid});
+		delete from T_CONTRACT_PAY where BID in (select EID from T_CONTRACT where COMPANY_ID = #{eid});
+		delete from T_CONTRACT_PARTY where BID in (select EID from T_CONTRACT where COMPANY_ID = #{eid});
+		delete from T_CONTRACT_FILE where BID in (select EID from T_CONTRACT where COMPANY_ID = #{eid});
+		delete from T_CONTRACT_CORE where BID in (select EID from T_CONTRACT where COMPANY_ID = #{eid});
+		delete from T_CONTRACT where COMPANY_ID = #{eid};
+		delete from T_CONTRACT_PAY_RECORD where COMPANY_ID = #{eid};
+		
+		delete from T_CONTRACT where COMPANY_ID = #{eid};
+		
+		
+		delete from SYS_APPROVAL_RECORD where USER_ID in (select EID from SYS_USER where COMPANY_ID = #{eid});
+		delete from SYS_APPROVAL_SET where COMPANY_ID = #{eid};
+		delete from SYS_DEPARTMENT where COMPANY_ID = #{eid} and `CODE` != '1000000000' and `CODE` != '1001000000';
+		delete from SYS_SETTINGS where COMPANY_ID = #{eid};
+		delete from SYS_USER where COMPANY_ID = #{eid} and USER_TYPE != 2;
+		delete from SYS_USER_EMAIL where USER_ID in (select EID from SYS_USER where COMPANY_ID = #{eid});
+		delete from SYS_USER_MENU where COMPANY_ID = #{eid};
+	</update>
+</mapper>

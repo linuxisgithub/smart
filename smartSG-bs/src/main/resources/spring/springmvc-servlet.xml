@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 修改说明: 1.修改<context:component-scan以确定要加载的controller,默认为com.**.controller 
+	2.修改class=ControllerClassNameHandlerMapping节点的pathPrefix以确定要生成的前缀 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-4.2.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd"
+	default-autowire="byName">
+
+	<!-- 自动搜索@Controller标注的类 -->
+	<context:component-scan base-package="com.**.controller" />
+
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>i18n.messages</value>
+				<value>ValidationMessages</value>
+			</list>
+		</property>
+		<property name="defaultEncoding" value="UTF-8"/>
+		<property name="cacheSeconds" value="120"/>
+		<property name="useCodeAsDefaultMessage" value="false"/>
+	</bean>
+
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass"  value="org.hibernate.validator.HibernateValidator"/>
+		<!--不设置则默认为classpath下的ValidationMessages.properties -->
+		<property name="validationMessageSource" ref="messageSource"/>
+	</bean>
+
+	<mvc:annotation-driven validator="validator"/>
+		
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/login.htm"/>
+			<mvc:exclude-mapping path="/logout.htm" />
+			<mvc:exclude-mapping path="/wpOa"/>
+			<mvc:exclude-mapping path="/wpPlus"/>
+			<mvc:exclude-mapping path="/wpCrm"/>
+			<mvc:exclude-mapping path="/vipLogin.htm"/>
+			<mvc:exclude-mapping path="/superLogin.htm"/>
+			<mvc:exclude-mapping path="/register.htm"/>
+			<mvc:exclude-mapping path="/forgetPass.htm"/>
+			<mvc:exclude-mapping path="/register/**"/>
+			<mvc:exclude-mapping path="/print/**"/>
+			<mvc:exclude-mapping path="/forget.htm"/>
+			<mvc:exclude-mapping path="/getRoKeyData.htm"/>
+			<mvc:exclude-mapping path="/download.htm"/>
+			<mvc:exclude-mapping path="/*/share/list/*/*/*/*.htm"/>
+			<mvc:exclude-mapping path="/*/share/list/*/*/*.htm"/>
+			<mvc:exclude-mapping path="/*/share/list/*/*.htm"/>
+			<mvc:exclude-mapping path="/*/share/*/*/*/*/*.htm"/>
+			<mvc:exclude-mapping path="/*/share/*/*/*/*/*/*.htm"/>
+			<mvc:exclude-mapping path="/*/share/*/*/*/*.htm"/>
+			<mvc:exclude-mapping path="/*/share/*/*/*.htm"/>
+			<mvc:exclude-mapping path="/*/share/detail/*/*/*.htm"/>
+			<mvc:exclude-mapping path="/*/share/detail/*/*.htm"/>
+			<mvc:exclude-mapping path="/*/share/*/*.htm"/>
+			<mvc:exclude-mapping path="/*/shareSummaryMonth/list/*/*/*/*.htm"/>
+			<mvc:exclude-mapping path="/*/shareSummaryYear/list/*/*/*/*.htm"/>
+			<mvc:exclude-mapping path="/*/share/HistoryPerfor/list/*/*/*/*.htm"/>
+			<mvc:exclude-mapping path="/*/orderHistoryList/*.htm"/>
+			<mvc:exclude-mapping path="/*/saleHistoryList/*.htm"/>
+			<!-- <mvc:exclude-mapping path="/register/isHavaPhone/*"/>
+			<mvc:exclude-mapping path="/register/getCode.htm"/>
+			<mvc:exclude-mapping path="/register/getCodeImg.htm"/>
+			<mvc:exclude-mapping path="/register/checkCode.htm"/>
+			<mvc:exclude-mapping path="/register/checkCodeImg.htm"/>
+			<mvc:exclude-mapping path="/register/sendMessage.htm"/>
+			<mvc:exclude-mapping path="/register/checkMessage.htm"/>
+			<mvc:exclude-mapping path="/register/checkMsgAndPhone.htm"/> -->
+			<bean id="sharedRenderVariableInterceptor" class="javacommon.interceptor.SharedRenderVariableInterceptor"/>
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/page/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- 文件上传 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8"/>
+		<property name="maxUploadSize" value="20971520"/>
+		<property name="maxInMemorySize" value="1048576"/>
+	</bean>
+	<bean id="gZIPCompress" class="javacommon.util.GZIPCompress"/>
+</beans>

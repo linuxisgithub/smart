@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysMenuDao">
+	<resultMap id="BaseResultMap" type="com.system.model.SysMenu">
+		<id column="EID" property="eid" />
+		<result column="PID" property="pid" />
+		<result column="MENU_NAME" property="menuName" />
+		<result column="MENU_CODE" property="menuCode" />
+		<result column="MENU_URL" property="menuUrl" />
+		<result column="MENU_LEVEL" property="menuLevel" />
+		<result column="MENU_TYPE" property="menuType" />
+		<result column="MENU_SHOW" property="menuShow" />
+		<result column="BTYPE" property="btype" />
+		<result column="REMARK" property="remark" />
+		<result column="ICON" property="icon" />
+		<result column="HAS_APPROVAL" property="hasApproval" />
+		<result column="COMPANY_LEVEL" property="companyLevel" />
+		<result column="SORT_INDEX" property="sortIndex" />
+		<result column="IS_USE" property="isUse" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		EID, PID, MENU_NAME, MENU_CODE, MENU_URL, MENU_LEVEL, 
+		MENU_TYPE, MENU_SHOW, BTYPE, REMARK, ICON, HAS_APPROVAL, 
+		COMPANY_LEVEL, SORT_INDEX, IS_USE
+	</sql>
+
+	<insert id="insert" parameterType="com.system.model.SysMenu" useGeneratedKeys="true" keyProperty="eid">
+		insert into SYS_MENU (
+			PID, MENU_NAME, MENU_CODE, MENU_URL, MENU_LEVEL, 
+			MENU_TYPE, MENU_SHOW, BTYPE, REMARK, ICON, HAS_APPROVAL, 
+			COMPANY_LEVEL, SORT_INDEX, IS_USE
+		) values (
+			#{pid}, #{menuName}, #{menuCode}, #{menuUrl}, #{menuLevel}, 
+			#{menuType}, #{menuShow}, #{btype}, #{remark}, #{icon}, #{hasApproval}, 
+			#{companyLevel}, #{sortIndex}, #{isUse}
+		)
+	</insert>
+	<select id="findAll" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_MENU
+	</select>
+	<select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_MENU
+		where EID = #{eid}
+	</select>
+
+	<update id="update" parameterType="com.system.model.SysMenu">
+		update SYS_MENU
+		<set>
+			<if test="pid != null">
+				PID = #{pid},
+			</if>
+			<if test="menuName != null">
+				MENU_NAME = #{menuName},
+			</if>
+			<if test="menuCode != null">
+				MENU_CODE = #{menuCode},
+			</if>
+			<if test="menuUrl != null">
+				MENU_URL = #{menuUrl},
+			</if>
+			<if test="menuLevel != null">
+				MENU_LEVEL = #{menuLevel},
+			</if>
+			<if test="menuType != null">
+				MENU_TYPE = #{menuType},
+			</if>
+			<if test="menuShow != null">
+				MENU_SHOW = #{menuShow},
+			</if>
+			<if test="btype != null">
+				BTYPE = #{btype},
+			</if>
+			<if test="remark != null">
+				REMARK = #{remark},
+			</if>
+			<if test="icon != null">
+				ICON = #{icon},
+			</if>
+			<if test="hasApproval != null">
+				HAS_APPROVAL = #{hasApproval},
+			</if>
+			<if test="companyLevel != null">
+				COMPANY_LEVEL = #{companyLevel},
+			</if>
+			<if test="sortIndex != null">
+				SORT_INDEX = #{sortIndex},
+			</if>
+			<if test="isUse != null">
+				IS_USE = #{isUse},
+			</if>
+		</set>
+		where EID = #{eid}
+	</update>
+	
+ 	<select id="getFristMenus" resultType="Map">
+ 	select distinct a.* from (
+    	select t1.EID id, t1.PID pid, t1.MENU_NAME name, t1.MENU_CODE code,
+    	t1.MENU_URL url, t1.ICON icon, t1.MENU_LEVEL level, t1.MENU_SHOW menuShow,
+    	1 hasRight, t1.SORT_INDEX
+		from SYS_MENU t1 left join SYS_USER_MENU t2 
+		on t1.EID = t2.MENU_ID 
+		and (
+			(t2.USE_ID = #{userId} and t2.KIND=3)
+			or
+			(t2.USE_ID = #{deptId} and t2.KIND=2)
+			or
+			(t2.USE_ID = #{companyId} and t2.KIND=1)
+		)
+		where t1.IS_USE = 1 and t1.MENU_LEVEL = 1 and t1.MENU_TYPE = 'menu'
+		and t1.COMPANY_LEVEL <![CDATA[<=]]> #{companyLevel}
+	) a order by a.SORT_INDEX
+    </select>
+    
+    <select id="getMenusByPid" resultType="Map">
+    select distinct a.* from (
+    	select t1.EID id, t1.PID pid, t1.MENU_NAME name, t1.MENU_CODE code,
+    	t1.MENU_URL url, t1.ICON icon, t1.MENU_LEVEL level, t1.MENU_SHOW menuShow,
+    	case when t2.EID is null then "1" else "1" end as hasRight, t1.SORT_INDEX
+		from SYS_MENU t1 left join SYS_USER_MENU t2 
+		on t1.EID = t2.MENU_ID
+		and (
+			(t2.USE_ID = #{userId} and t2.KIND=3)
+			or
+			(t2.USE_ID = #{deptId} and t2.KIND=2)
+			or
+			(t2.USE_ID = #{companyId} and t2.KIND=1)
+		) 
+		where t1.IS_USE = 1 and t1.MENU_TYPE = 'menu'
+		and t1.PID = #{menuPid}
+	) a order by a.SORT_INDEX
+    </select>
+    
+    
+    <select id="getAdminFristMenus" resultType="Map">
+    	select t1.EID id, t1.PID pid, t1.MENU_NAME name, t1.MENU_CODE code, 1 hasRight,
+    	t1.MENU_URL url, t1.ICON icon, t1.MENU_LEVEL level, t1.MENU_SHOW menuShow
+		from SYS_MENU t1 where t1.IS_USE = 1 and t1.MENU_LEVEL = 1 and t1.MENU_TYPE = 'menu'
+		and t1.COMPANY_LEVEL <![CDATA[<=]]> #{companyLevel}
+		order by t1.SORT_INDEX
+    </select>
+    
+    <select id="getAdminMenusByPid" resultType="Map">
+    	select t1.EID id, t1.PID pid, t1.MENU_NAME name, t1.MENU_CODE code, 1 hasRight,
+    	t1.MENU_URL url, t1.ICON icon, t1.MENU_LEVEL level, t1.MENU_SHOW menuShow
+		from SYS_MENU t1 where t1.IS_USE = 1 and t1.MENU_TYPE = 'menu'
+		and t1.COMPANY_LEVEL <![CDATA[<=]]> #{companyLevel}
+		and t1.PID = #{menuPid}
+		order by t1.SORT_INDEX
+    </select>
+    
+    <select id="getSysSetFirstMenus" resultType="Map">
+    select distinct a.* from (
+    	select t1.EID id, t1.PID pid, t1.MENU_NAME name, t1.MENU_CODE code, t1.MENU_SHOW menuShow,
+    	t1.MENU_URL url, t1.ICON icon, t1.MENU_LEVEL level, IFNULL(t2.VALUE, 0) confirm, t1.SORT_INDEX,
+    	t1.REMARK remark
+		from SYS_MENU t1 left join SYS_SETTINGS t2 
+		on t1.EID = t2.BID and t2.CODE = 's_menu' and t2.COMPANY_ID = #{conpanyId}
+		where t1.IS_USE = 1 and t1.MENU_LEVEL = 1 and t1.MENU_TYPE = 's_menu'
+		and t1.COMPANY_LEVEL <![CDATA[<=]]> #{companyLevel}
+	) a order by a.SORT_INDEX
+    </select>
+    <select id="getSysSetSecMenusByPid" resultType="Map">
+    select distinct a.* from (
+    	select t1.EID id, t1.PID pid, t1.MENU_NAME name, t1.MENU_CODE code, t1.MENU_SHOW menuShow,
+    	t1.MENU_URL url, t1.ICON icon, t1.MENU_LEVEL level, IFNULL(t2.VALUE, 0) confirm, t1.SORT_INDEX,
+    	t1.REMARK remark
+		from SYS_MENU t1 left join SYS_SETTINGS t2
+		on t1.EID = t2.BID and t2.CODE = 's_menu' and t2.COMPANY_ID = #{conpanyId}
+		where t1.IS_USE = 1 and MENU_TYPE = 's_menu' and t1.MENU_LEVEL = 2
+		and t1.COMPANY_LEVEL <![CDATA[<=]]> #{companyLevel}
+		and t1.PID = #{menuPid}
+	) a order by a.SORT_INDEX
+    </select>
+    <select id="getSysSetMenusByPid" resultType="Map">
+    	select t1.EID id, t1.PID pid, t1.MENU_NAME name, t1.MENU_CODE code,
+    	t1.MENU_URL url, t1.ICON icon, t1.MENU_LEVEL level, t1.MENU_SHOW menuShow,
+    	t1.REMARK remark
+		from SYS_MENU t1 where t1.IS_USE = 1 and t1.MENU_TYPE = 's_menu'
+		and t1.COMPANY_LEVEL <![CDATA[<=]]> #{companyLevel}
+		and t1.PID = #{menuPid}
+		order by t1.SORT_INDEX
+    </select>
+    
+    <select id="getSettingsRightList" resultType="Map">
+    	select a.REMARK remark, a.eid, a.`name`, 
+		CONCAT(IFNULL(group_concat(a.useId),''),'') useIds,
+		case 
+			when CHAR_LENGTH(IFNULL(group_concat(a.useName),'')) > 15 
+				then CONCAT(substring(IFNULL(group_concat(a.useName),''),1,15), '...')
+			else IFNULL(group_concat(a.useName),'') 
+		end useNames,
+		IFNULL(group_concat(a.useName),'') fullUseNames,
+		case 
+			when CHAR_LENGTH(IFNULL(group_concat(DISTINCT a.useDeptName),'')) > 15 
+				then CONCAT(substring(IFNULL(group_concat(DISTINCT a.useDeptName),''),1,15), '...')
+			else IFNULL(group_concat(DISTINCT a.useDeptName),'') 
+		end useDeptNames,
+		IFNULL(group_concat(DISTINCT a.useDeptName),'') fullUseDeptNames, 
+		a.kind, IFNULL(a.hasAppr, 0) hasAppr, a.approvalId, a.btype
+		from (
+			select t1.EID eid, t1.MENU_NAME name, IFNULL(t2.KIND,0) kind,t2.USE_ID useId,t2.USE_NAME useName,t1.REMARK,
+			t2.USE_DEPT_NAME useDeptName,t1.HAS_APPROVAL hasAppr, t2.APPROVAL_ID approvalId, t1.BTYPE btype,
+			t1.SORT_INDEX
+			from SYS_MENU t1 left join SYS_USER_MENU t2 
+			on t1.EID = t2.MENU_ID and t2.COMPANY_ID = #{companyId} and GRANT_TYPE = 0
+			<!-- where t1.PID = #{pid} and (t1.MENU_LEVEL = 2 or t1.MENU_LEVEL = 2.5) and t1.IS_USE = 1 -->
+			where t1.EID = #{pid} and (t1.MENU_LEVEL = 2 or t1.MENU_LEVEL = 2.5 or t1.MENU_LEVEL = 2.8 or t1.MENU_LEVEL = 3) and t1.IS_USE = 1
+			and t1.COMPANY_LEVEL <![CDATA[<=]]> #{companyLevel}
+			<!--and t1.EID <![CDATA[<>]]> 10203  事务申请 -->
+			<!--and t1.EID <![CDATA[<>]]> 10403  人事事务 -->
+			<!--and t1.EID <![CDATA[<>]]> 10303  抄送给我 -->
+		) a group by a.eid order by a.SORT_INDEX;
+    </select>
+    
+    <select id="getMenuChildIds" resultType="String">
+		SELECT Eid eid FROM SYS_MENU
+		where PID = #{pid} and (MENU_TYPE = 'menu' or MENU_TYPE = 's_menu') and IS_USE = 1
+	</select>
+	
+	<select id="getSpecialRight" resultType="int">
+    	select count(1) from SYS_USER_MENU t2
+    	<!-- join SYS_MENU t1 on t1.EID = t2.MENU_ID and t1.MENU_LEVEL <![CDATA[<=]]> #{companyLevel} -->
+    	where ((t2.USE_ID = #{userId} and t2.KIND=3)
+			or
+			(t2.USE_ID = #{deptId} and t2.KIND=2)
+			or
+			(t2.USE_ID = #{companyId} and t2.KIND=1))
+			and t2.MENU_ID = #{menuId} and t2.COMPANY_ID = #{companyId}
+    </select>
+    
+    
+    <select id="getWorkMenu" resultType="Map">
+    select distinct a.* from (
+    	select t1.EID id, t1.PID pid, t1.MENU_NAME name, t1.MENU_CODE code,
+    	t1.MENU_URL url, t1.ICON icon, t1.MENU_LEVEL level, t1.MENU_SHOW menuShow,
+    	case when t2.EID is null then "0" else "1" end as hasRight, t1.SORT_INDEX
+		from SYS_MENU t1 left join SYS_USER_MENU t2 
+		on t1.EID = t2.MENU_ID
+		and (
+			(t2.USE_ID = #{userId} and t2.KIND=3)
+			or
+			(t2.USE_ID = #{deptId} and t2.KIND=2)
+			or
+			(t2.USE_ID = #{companyId} and t2.KIND=1)
+		) 
+		where t1.IS_USE = 1 and t1.MENU_TYPE = 't_menu'
+		and t1.COMPANY_LEVEL <![CDATA[<=]]> #{companyLevel}
+	) a order by a.SORT_INDEX
+    </select>
+    
+    <select id="getMainMenuWithCj" resultType="Map">
+    	select t1.EID eid, t1.MENU_NAME name
+		from SYS_MENU t1 
+		where  t1.IS_USE = 1 and t1.MENU_LEVEL = 1 and t1.MENU_TYPE = 'menu' and t1.SORT_INDEX <![CDATA[<>]]> 11
+		and t1.COMPANY_LEVEL <![CDATA[<=]]> #{companyLevel}
+	 order by t1.SORT_INDEX
+    </select>
+    
+     <select id="getSubMenu" resultType="Map">
+	SELECT t1.EID eid, t1.MENU_NAME name,t1.PID pid,t1.MENU_URL menuUrl,t1.MENU_CODE menuCode
+		FROM SYS_MENU t1 
+		WHERE t1.IS_USE = 1 AND  (t1.MENU_LEVEL = 2 OR t1.MENU_LEVEL = 2.5) AND t1.MENU_TYPE = 'menu' 
+		AND t1.COMPANY_LEVEL <![CDATA[<=]]> #{companyLevel}
+		<if test="superType == 'find'">
+			and t1.FIND_EDIT_DEL like '1__'
+		</if>
+		<if test="superType == 'edit'">
+			and t1.FIND_EDIT_DEL like '_1_'
+		</if>
+		<if test="superType == 'delete'">
+			and t1.FIND_EDIT_DEL like '__1'
+		</if>
+		
+	 ORDER BY t1.SORT_INDEX
+    </select>
+
+	<select id="getFristMenus_three" resultType="Map">
+		select
+			EID id, PID pid, MENU_NAME name, MENU_CODE code,
+			MENU_URL url, ICON icon, MENU_LEVEL level, MENU_SHOW menuShow,
+			1 hasRight, SORT_INDEX
+		from SYS_MENU
+		where MENU_LEVEL = 1 and MENU_TYPE = 'menu'
+		      and COMPANY_LEVEL = #{userType}
+		order by SORT_INDEX
+	</select>
+
+	<select id="getMenusByPid_three" resultType="Map">
+		select
+			EID id, PID pid, MENU_NAME name, MENU_CODE code,
+			MENU_URL url, ICON icon, MENU_LEVEL level, MENU_SHOW menuShow,
+			1 hasRight, SORT_INDEX
+		from SYS_MENU
+		where IS_USE = 1 and MENU_TYPE = 'menu'
+		  and PID = #{menuPid}
+		order by SORT_INDEX
+	</select>
+
+    <select id="getSgMenus" resultType="Map">
+		select
+			CONCAT(203,EID) id, 203 pid, NAME name, '' code,
+			'' url, '' icon, 2 level, 1 menuShow,
+			1 hasRight
+		from SYS_DEPARTMENT
+		where COMPANY_ID = #{companyId} and TYPE = 3
+		  and DTYPE = 2
+		  and PID = #{pid}
+		order by CREATE_TIME
+	</select>
+
+	<select id="getCurrentTwMenu" resultType="Map">
+		select
+			CONCAT(401,EID) id, 401 pid, NAME name, '' code,
+			'' url, '' icon, 2 level, 1 menuShow,
+			1 hasRight
+		from SYS_DEPARTMENT
+		where COMPANY_ID = #{companyId} and TYPE = 4
+		  and DTYPE = 2
+		  and (EID = #{eid} or EID in (select BBID from T_BINDING where BID = #{eid} and TYPE = 'tw'))
+		order by CREATE_TIME
+	</select>
+
+	<select id="getSgyyzMenu" resultType="Map">
+		select
+			CONCAT(501,EID) id, 501 pid, NAME name, '' code,
+			'' url, '' icon, 2 level, 1 menuShow,
+			1 hasRight
+		from SYS_DEPARTMENT
+		where COMPANY_ID = #{companyId} and TYPE = 3
+		  and DTYPE = 2
+		  and EID in (select BBID from T_BINDING where BID = #{eid} and TYPE = 'sg')
+		order by CREATE_TIME
+	</select>
+	
+    <select id="getTwMenus" resultType="Map">
+		select
+			CONCAT(301,EID) id, 301 pid, NAME name, '' code,
+			'' url, '' icon, 2 level, 1 menuShow,
+			1 hasRight
+		from SYS_DEPARTMENT
+		where COMPANY_ID = #{companyId} and TYPE = 4
+		  and DTYPE = 2
+		  and PID = #{pid}
+		order by CREATE_TIME
+	</select>
+	
+	<select id="findMenusBySubPid" resultType="java.util.Map">
+		select
+		MENU_NAME name,MENU_CODE code,MENU_URL url,
+		MENU_LEVEL level,ICON icon,MENU_SHOW menuShow,1 hasRight
+		from SYS_MENU
+		where
+		IS_USE = 1 and MENU_TYPE = 'menu'
+		and COMPANY_LEVEL = #{userType} and left(EID,3) = #{subPid}
+		and MENU_LEVEL = 3
+		order by SORT_INDEX
+	</select>
+</mapper>
